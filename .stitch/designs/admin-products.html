@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Product Management Page</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2badee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-8 lg:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col w-full max-w-[1200px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-4 lg:px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-slate-900 dark:text-slate-100">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Admin Dashboard</h2>
+</div>
+<label class="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-500 dark:text-slate-400 flex border-none bg-slate-100 dark:bg-slate-800/50 items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-slate-800/50 focus:border-none h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search products..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden lg:flex items-center gap-9">
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary pb-1" href="#">Products</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Orders</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Customers</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Settings</a>
+</nav>
+<div class="flex gap-3 items-center">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20">
+<span class="material-symbols-outlined text-[18px] mr-1">add</span>
+<span class="truncate">Thêm Sản Phẩm Mới</span>
+</button>
+<button class="flex items-center justify-center overflow-hidden rounded-full h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700 cursor-pointer" data-alt="Admin User Avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDF-XAdc1P9dCIezZTvz8MPpV2G9oZslJ3edOFUue4nFf3q21uBNV45PNZ7_QZve8EcDGuuq-JyQC4hEb74SyongsPj9eFt1inc9b_wvqFMUrSeBlOSdztnNyKp3OJIWlxq_Iks8-bOEO9q_8s2tCAMifFKwy3OFH0zV4B2J0_rCWY-2nYtKDdRjhNbGQfiI4FFevRKa3hdnFwI2YL2UwiVwq8mRaiQAH8CsxJ6WC7B1iZAD3Sp5U0NvFPkoRbU1bUrxSdpmjVFLk56");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 py-6 px-4 lg:px-10">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h1 class="text-[28px] font-bold leading-tight tracking-[-0.015em] mb-1">Products</h1>
+<p class="text-sm text-slate-500 dark:text-slate-400">Manage your laptop inventory and pricing.</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-9 px-3 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[18px] mr-1">filter_list</span>
+                                    Filter
+                                </button>
+<button class="flex items-center justify-center rounded-lg h-9 px-3 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[18px] mr-1">download</span>
+                                    Export
+                                </button>
+</div>
+</div>
+<div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#15232b] shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24">ID</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Product Name</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Brand</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-40">Price (VND)</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Stock</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 font-medium">#LP-001</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100 flex items-center gap-3">
+<div class="h-10 w-10 rounded bg-slate-100 dark:bg-slate-800 bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="MacBook Pro thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmmzLZRpHwZ_WiK3olGuG0VncmWwLKwGP9gp_pObgD_dQvLbcvz8m4rzdTPONeUwJa7Hn3G46VeiBwRkYT_R9Vrel9yhFmENo14017-jTPaKdQsMUhcDwXK0dPIuOuQCrxzzaCmA064bvOa4r2n02PYLlPZDAnfa58yz9ajhagyufeTEgyIBxnwAAuqPsbfS6ADxnJsq2km1LBehEVefhvypVjxIWWu0e05_Cw9grsko1_TUaMuV8j7lOL3le8k_HMJQgL72DAZFvG');"></div>
+<div>
+                                                MacBook Pro 16" M3 Max
+                                                <div class="text-xs text-slate-500 dark:text-slate-500 font-normal mt-0.5">36GB RAM / 1TB SSD</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Apple</span>
+</td>
+<td class="px-6 py-4 text-sm text-slate-900 dark:text-slate-100 font-medium">89,990,000</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-green-500"></div>
+<span class="text-sm text-slate-700 dark:text-slate-300">24</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors p-1 ml-1" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 font-medium">#LP-002</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100 flex items-center gap-3">
+<div class="h-10 w-10 rounded bg-slate-100 dark:bg-slate-800 bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="Dell XPS 15 thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBfhFa1etj3nldOBAmWOPMsglMUUbX0uLTG4UoeNIIqhxaw1rN5U0qEvWh2iKbq0zwItNeEyYsFoOMCgBKeFWULJj1Bvam0nQsxrwVLiGu0rFy8HQu2ESKWKLzutvKqnC4PqA5snxfpbavRxvrEU1UVVKAUm4PHrtr_QKn1eQ29yB8fg46XvJRJ_984wKg6NmsExngqJDddhKLfRA7BNP4uCz7iVWBkKz6Rls05pQ1DIX46IfW1AX4yUX7i1vIYzsPtWiJk0FxNohMt');"></div>
+<div>
+                                                Dell XPS 15 9530
+                                                <div class="text-xs text-slate-500 dark:text-slate-500 font-normal mt-0.5">i9-13900H / 32GB / RTX 4070</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Dell</span>
+</td>
+<td class="px-6 py-4 text-sm text-slate-900 dark:text-slate-100 font-medium">65,490,000</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-green-500"></div>
+<span class="text-sm text-slate-700 dark:text-slate-300">12</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors p-1 ml-1" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 font-medium">#LP-003</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100 flex items-center gap-3">
+<div class="h-10 w-10 rounded bg-slate-100 dark:bg-slate-800 bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="ThinkPad X1 thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDa5T31GH8n5laLvlzIURw0wJ13Lj2ZIegTOK1qdQsX-khPFadPebi0y7ZRWUjQrHoAfNTbFOIVJGqvNKEMmyynzFbEnPAngmU6q0n16r0jwkjSpZNJekzflV5CGkTBTgNZ9Z6HOpi4yTvWqRDC-kNyty4iyxm1g01PPVdC2bKLyTmElEeFGm9qVKXaSrcX7dIEuzMyGZnzlw3UASwT6q3KhOpC8hKFbeUaumMX-c_yZvK7nNYxcn0CaaEzF8yFKdQ9BuywcntHZZc2');"></div>
+<div>
+                                                ThinkPad X1 Carbon Gen 11
+                                                <div class="text-xs text-slate-500 dark:text-slate-500 font-normal mt-0.5">i7-1355U / 16GB / 512GB</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Lenovo</span>
+</td>
+<td class="px-6 py-4 text-sm text-slate-900 dark:text-slate-100 font-medium">48,990,000</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-yellow-500"></div>
+<span class="text-sm text-slate-700 dark:text-slate-300">5</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors p-1 ml-1" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 font-medium">#LP-004</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100 flex items-center gap-3">
+<div class="h-10 w-10 rounded bg-slate-100 dark:bg-slate-800 bg-cover bg-center border border-slate-200 dark:border-slate-700" data-alt="Razer Blade 16 thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAD_d50XgksfEqcA12z_Ve524IZgAxe0huA8CEIAccbRVZfQB97nixRSzEuQB4PKBtR8fLY73Aq-H7Pe9fbvXwhApxKPhaTJUCJVxjlhYlQ0TmLVhZRzMoZQcm20z8lm7CzDR_8eqYhfA22G-2aKWdsCbLHbEafRC1Mg2NpT3aacCE-k0z35UmEy-L8Gj2nEIfJSUWGJ5uF0bn5rCHo1M80H9jXFaRjB_0Q9NYSrnRAiiEhB-LQFQPcmKjPARAJ70qUN_Luvmx5f-ke');"></div>
+<div>
+                                                Razer Blade 16 (2024)
+                                                <div class="text-xs text-slate-500 dark:text-slate-500 font-normal mt-0.5">i9-14900HX / 32GB / RTX 4080</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Razer</span>
+</td>
+<td class="px-6 py-4 text-sm text-slate-900 dark:text-slate-100 font-medium">105,000,000</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-red-500"></div>
+<span class="text-sm text-slate-700 dark:text-slate-300">2</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors p-1" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors p-1 ml-1" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex items-center justify-between py-6">
+<div class="text-sm text-slate-500 dark:text-slate-400">
+                                Showing <span class="font-medium text-slate-900 dark:text-slate-100">1</span> to <span class="font-medium text-slate-900 dark:text-slate-100">4</span> of <span class="font-medium text-slate-900 dark:text-slate-100">45</span> results
+                            </div>
+<div class="flex items-center gap-1">
+<a class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</a>
+<a class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-background-dark text-sm font-bold" href="#">1</a>
+<a class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">2</a>
+<a class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">3</a>
+<span class="flex h-8 w-8 items-center justify-center text-slate-500">...</span>
+<a class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">10</a>
+<a class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</a>
+</div>
+</div>
+</main>
+</div>
+</div>
+</div>
+<!-- Overlay for Modal -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+<!-- Modal Content -->
+<div class="bg-white dark:bg-[#15232b] rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-3xl flex flex-col max-h-[90vh]">
+<div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Thêm Sản Phẩm Mới</h3>
+<button class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors rounded-full p-1 hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="overflow-y-auto p-6 flex-1">
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="col-span-1 md:col-span-2 space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Product Name</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4" placeholder="e.g. MacBook Pro 16 M3 Max" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Brand</label>
+<select class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4">
+<option disabled="" selected="" value="">Select brand...</option>
+<option>Apple</option>
+<option>Dell</option>
+<option>Lenovo</option>
+<option>HP</option>
+<option>ASUS</option>
+<option>Razer</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">CPU</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4" placeholder="e.g. Apple M3 Max 16-core" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">RAM</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4" placeholder="e.g. 36GB Unified Memory" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Storage</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4" placeholder="e.g. 1TB NVMe SSD" type="text"/>
+</div>
+<div class="col-span-1 md:col-span-2 space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Display</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4" placeholder="e.g. 16.2-inch Liquid Retina XDR, 120Hz" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Price (VND)</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="text-slate-500 sm:text-sm">₫</span>
+</div>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 pl-8 pr-4" placeholder="0" type="number"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Stock Quantity</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4" placeholder="0" type="number"/>
+</div>
+<div class="col-span-1 md:col-span-2 space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Image URL</label>
+<div class="flex gap-3">
+<input class="flex-1 rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary shadow-sm h-11 px-4" placeholder="https://example.com/image.jpg" type="url"/>
+<button class="px-4 h-11 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" type="button">
+                                    Preview
+                                </button>
+</div>
+</div>
+</form>
+</div>
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 rounded-b-xl">
+<button class="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        Cancel
+                    </button>
+<button class="px-5 py-2.5 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                        Lưu Sản Phẩm
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TechBook Store - Laptops with AI Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen relative">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-4 mb-6">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<span class="material-symbols-outlined text-3xl">laptop_mac</span>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">TechBook Store</h2>
+</div>
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100 dark:bg-slate-800">
+<div class="text-slate-500 dark:text-slate-400 flex items-center justify-center pl-4 rounded-l-lg">
+<span class="material-symbols-outlined text-[24px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search laptops..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-primary font-bold leading-normal border-b-2 border-primary pb-1" href="#">Laptops</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Accessories</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Support</a>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdQ89XGHZmD-RaAISq-BND-OmD_c123Dn-8_H4EaPWhDtpCXY7n3jFQEF4Qn61w_DPh0HeCt8jFPxN4TplzAB7LXzR1r9v9_fBGooFPhanpCnOESGuvtHmFvkaRlbOG4RYCjuxAmCDf0tFz9_VCaw2RLmbuKGNnRNWZPViV84jlERZG6mkAygGbP6_PInIhhpqwFmhqEjZJ9zBTJm4FHicpWlLmUIdWEnWwI5kMkgEXhLq9Lu4B7uhcQePtfH_eN5NrCA4VY1-l882");'></div>
+</div>
+</div>
+</header>
+<!-- Hero Section -->
+<div class="@container mb-10">
+<div class="@[480px]:p-4">
+<div class="flex min-h-[400px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-center justify-center p-8 relative overflow-hidden" data-alt="Modern workspace with high-end laptop" style='background-image: linear-gradient(rgba(16, 22, 34, 0.7), rgba(16, 22, 34, 0.9)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuACr5n4Qn9AUENiT6iOzbMsCOZevLri3TpUhe3Guu1q5PzLpXGG3oFX6w_dm_Xpyu0sPQ4tQB1zBpFQLtsxfUC1pmoNi9rQmUJPL27BWzIEiTGB0wFOyhPKkDKt58xcMkIbqN46FcNVBzPidLm1aY0-kIDuQ1yF1W3G6HbCI-fRIXfaUW4YrooFJsbrswEUW1HFlRiHd7r5UhfDhiNJgoxxKGwY4oFBb_oE5jP-nNcIPPGrOnHZnXHcX5hxqMrNXY_-NXgPctXJIzyz");'>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent"></div>
+<div class="flex flex-col gap-4 text-center relative z-10 max-w-2xl">
+<h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl">
+                                        Discover Premium Laptops
+                                    </h1>
+<h2 class="text-slate-200 text-lg font-normal leading-relaxed @[480px]:text-xl">
+                                        Powered by AI to find your perfect match. Experience unparalleled performance and sleek design.
+                                    </h2>
+<div class="mt-4">
+<button class="flex inline-flex cursor-pointer items-center justify-center rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-[0_0_15px_rgba(43,108,238,0.5)]">
+                                            Shop Now
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Products Grid -->
+<div class="flex items-center justify-between px-4 pb-6">
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em]">Featured Laptops</h2>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary">
+<span class="material-symbols-outlined">sort</span>
+</button>
+</div>
+</div>
+<div id="product-grid" class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-8 p-4 mb-24">
+<!-- Product Card 1 -->
+<div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg overflow-hidden relative" data-alt="Sleek silver laptop half open" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADjCwUr3uv2sju2Fftn4qlZDkeQbf5H_dGHVTSsAIKxkF_2Baifc_XxU_G0FY2swYLwYfmM6DEB53zK682w8_d2R7Wola31oOJXcE0gwA3BiXPHfiAA4yXEY1JQZj7tHhyY0e639SjD2GlzbdXBQs4Hf4hZo2MfGX0yr4I_4S-O7YohCJBswAuMec5LLJOs0m-I9X3NTkZ-JQ2EaY-0vLu9i0gQkoUw6oIEU2FAByIRQ-pikTkaP2LHauaRSJCEAS-n8Fyn21MGZT6");'>
+<div class="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded">NEW</div>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">ProBook X15</h3>
+<span class="text-primary font-bold text-lg">$1,499</span>
+</div>
+<div class="flex flex-col gap-1 mb-4">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">memory</span> M3 Chip
+                                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">memory_alt</span> 16GB RAM
+                                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">hard_drive</span> 512GB SSD
+                                    </p>
+</div>
+<button class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                                    Add to Cart
+                                </button>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg overflow-hidden relative" data-alt="Dark gaming laptop with glowing keyboard" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAdJFWgul1IguwceBRhxeXwZEX0IK0pqDpXoGsV-hRr0FdWYpGe0mWBbODOV-eUWXHiNZXGcYj3P4E4Z4IH47OoBAAqtGPowDewbMWsIzPrZBsQBXwjF-xQ_vzhdGjjUjrlO5QQfjbxeW1EiaKDFI5dLdrHFq6dALCWpb8p8fnhBgCFPcBaMsblFPnPSc1F7YbEwKrqJkgokuegDhfwO0UK5yME2e-4leI-qpF35CtcrvqpMSEQfbIDu3rO3ACFrrXgqM1XfHjUfAuE");'>
+<div class="absolute top-2 right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded">BEST SELLER</div>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Zenith Stealth 14</h3>
+<span class="text-primary font-bold text-lg">$1,899</span>
+</div>
+<div class="flex flex-col gap-1 mb-4">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">memory</span> Core i9
+                                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">memory_alt</span> 32GB RAM
+                                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">hard_drive</span> 1TB SSD
+                                    </p>
+</div>
+<button class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                                    Add to Cart
+                                </button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg overflow-hidden relative" data-alt="High performance gaming laptop on desk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAP5I-bkCYxflgRApIBZZ-IJ86KBlQQ3eAE4E0XGfnaPXuTylm3tefV_oTvx0FiJGylSOee9z_d06KePZ1v9XDmp0TU4f8_IgX-YfPMcG99IH8HF41HmnA2ldX52r-XPtII3EhYGKKLka0962kCkbtGDz9VDzSXVitAw_1Lg3BV-6DF7EyDXqSTVegKcHpu_S8jqK68TiEiRnmJjWGQ_JLjA6cSIvoYEn4yUSa5HHs3OxDSzUjdIgNYOmufpE7zXbS2O96epxNCrXOx");'></div>
+<div class="flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Titan Gamer Pro</h3>
+<span class="text-primary font-bold text-lg">$2,299</span>
+</div>
+<div class="flex flex-col gap-1 mb-4">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">videocam</span> RTX 4080
+                                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">memory_alt</span> 64GB RAM
+                                    </p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">hard_drive</span> 2TB SSD
+                                    </p>
+</div>
+<button class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                                    Add to Cart
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Assistant Chat Widget -->
+<div id="chat-widget" class="fixed bottom-6 right-6 w-80 flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden z-50">
+<!-- Chat Header -->
+<div class="bg-primary px-4 py-3 flex justify-between items-center text-white cursor-pointer" id="chat-toggle-header">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">smart_toy</span>
+<h4 class="font-bold text-sm">TechAI Assistant</h4>
+</div>
+<div class="flex items-center gap-2">
+<button id="chat-minimize" class="hover:text-white/80 transition-colors"><span class="material-symbols-outlined text-[18px]">minimize</span></button>
+</div>
+</div>
+<!-- Chat Messages -->
+<div id="chat-messages" class="flex-1 p-4 flex flex-col gap-4 h-64 overflow-y-auto bg-slate-50 dark:bg-slate-800/50">
+<div class="flex justify-start">
+<div class="flex gap-2 max-w-[90%]">
+<div class="bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-[18px]">smart_toy</span></div>
+<div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm">Xin chào! Tôi có thể giúp bạn tìm laptop phù hợp. Bạn cần dùng để làm gì? 💻</div>
+</div>
+</div>
+</div>
+<!-- Chat Input -->
+<div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<input id="chat-input" class="flex-1 bg-transparent border-none text-sm text-slate-900 dark:text-white focus:ring-0 p-0 placeholder:text-slate-500" placeholder="Hỏi về cấu hình, giá cả..." type="text"/>
+<button id="chat-send" class="text-primary hover:text-primary/80 flex items-center justify-center p-1"><span class="material-symbols-outlined text-[20px]">send</span></button>
+</div>
+</div>
+</div>
+
+<script type="module">
+  import { fetchProducts, Cart, sendChatMessage } from './api.js';
+
+  const SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
+  const cartCountEl = document.querySelector('[data-cart-count]');
+
+  // ── Update cart badge ────────────────────────────────────────────
+  function updateCartBadge() {
+    const total = Cart.getAll().reduce((s, i) => s + i.quantity, 0);
+    document.querySelectorAll('.cart-badge').forEach(el => el.textContent = total > 0 ? total : '');
+  }
+
+  // ── Render products ──────────────────────────────────────────────
+  function formatPrice(p) {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
+    if (!products.length) { grid.innerHTML = '<p class="text-slate-400 text-center col-span-full py-8">Không tìm thấy sản phẩm nào.</p>'; return; }
+    grid.innerHTML = products.map(p => `
+      <div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
+        <div class="w-full aspect-video rounded-lg overflow-hidden bg-slate-800 flex items-center justify-center cursor-pointer" onclick="window.location.href='product-detail.html?id=${p.id}'">
+          ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover"/>` : `<span class="material-symbols-outlined text-5xl text-slate-600">laptop_mac</span>`}
+        </div>
+        <div class="flex flex-col flex-1">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer" onclick="window.location.href='product-detail.html?id=${p.id}'">${p.name}</h3>
+            <span class="text-primary font-bold text-lg">${formatPrice(p.price)}</span>
+          </div>
+          <p class="text-slate-500 dark:text-slate-400 text-sm mb-1"><strong>Hãng:</strong> ${p.brand || 'N/A'}</p>
+          ${p.specs ? `<p class="text-slate-500 dark:text-slate-400 text-sm mb-3">${typeof p.specs === 'object' ? Object.entries(p.specs).map(([k,v])=>`${k}: ${v}`).join(' | ') : p.specs}</p>` : ''}
+          <p class="text-sm mb-3 ${p.stock_quantity > 0 ? 'text-green-400' : 'text-red-400'}">${p.stock_quantity > 0 ? `Còn ${p.stock_quantity} sản phẩm` : 'Hết hàng'}</p>
+          <button onclick='addToCart(${JSON.stringify(p)})' ${p.stock_quantity === 0 ? 'disabled' : ''} class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2 disabled:opacity-40">
+            <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span> Thêm vào giỏ
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.addToCart = function(product) {
+    Cart.add(product);
+    updateCartBadge();
+    showToast(`Đã thêm "${product.name}" vào giỏ hàng!`, 'success');
+  };
+
+  // Toast Function
+  window.showToast = function(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
+      document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `pointer-events-auto px-4 py-3 rounded-lg shadow-lg text-white font-medium flex items-center gap-2 transform transition-all duration-300 translate-x-full ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+    toast.innerHTML = `<span class="material-symbols-outlined text-xl">${type === 'success' ? 'check_circle' : 'error'}</span> <span>${message}</span>`;
+    container.appendChild(toast);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-x-full');
+    });
+
+    // Auto remove
+    setTimeout(() => {
+      toast.classList.add('translate-x-full', 'opacity-0');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  async function loadProducts(search = '') {
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="col-span-full text-center py-10 text-slate-400">Đang tải sản phẩm...</div>';
+    try {
+      const products = await fetchProducts(search);
+      renderProducts(products);
+    } catch (e) {
+      grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-400">Lỗi tải sản phẩm: ${e.message}. Hãy đảm bảo backend đang chạy tại localhost:8000</div>`;
+    }
+  }
+
+  // ── Search ───────────────────────────────────────────────────────
+  const searchInput = document.querySelector('input[placeholder="Search laptops..."]');
+  if (searchInput) {
+    let timer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => loadProducts(searchInput.value), 400);
+    });
+  }
+
+  // ── Navigation links ─────────────────────────────────────────────
+  document.querySelectorAll('a[href="#"]').forEach(a => {
+    const text = a.textContent.trim();
+    if (text === 'Accessories' || text === 'Support') a.href = 'track-order.html';
+  });
+
+  // ── Cart icon badge ───────────────────────────────────────────────
+  const cartBtn = document.querySelector('button:has(.material-symbols-outlined:nth-of-type(1))');
+  if (cartBtn) {
+    cartBtn.addEventListener('click', () => { window.location.href = 'checkout.html'; });
+  }
+
+  // ── AI Chat ──────────────────────────────────────────────────────
+  const chatMessages = document.getElementById('chat-messages');
+  const chatInput = document.getElementById('chat-input');
+  const chatSend = document.getElementById('chat-send');
+  const chatMinimize = document.getElementById('chat-minimize');
+  const chatWidget = document.getElementById('chat-widget');
+
+  function appendMessage(role, text) {
+    const isUser = role === 'user';
+    const bubble = document.createElement('div');
+    bubble.className = isUser ? 'flex justify-end' : 'flex justify-start';
+    bubble.innerHTML = isUser
+      ? `<div class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg rounded-tr-none px-3 py-2 max-w-[80%]">${text}</div>`
+      : `<div class="flex gap-2 max-w-[90%]">
+           <div class="bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-[18px]">smart_toy</span></div>
+           <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm">${text}</div>
+         </div>`;
+    chatMessages.appendChild(bubble);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+    chatInput.value = '';
+    appendMessage('user', msg);
+    appendMessage('ai', '<em>Đang suy nghĩ...</em>');
+    try {
+      const data = await sendChatMessage(SESSION_ID, msg);
+      chatMessages.lastElementChild.querySelector('div:last-child').innerHTML = data.response;
+    } catch (e) {
+      chatMessages.lastElementChild.querySelector('div:last-child').innerHTML = '❌ Lỗi kết nối AI. Hãy kiểm tra backend.';
+    }
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  chatSend.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+  let minimized = false;
+  chatMinimize.addEventListener('click', () => {
+    minimized = !minimized;
+    chatMessages.style.display = minimized ? 'none' : '';
+    document.querySelector('#chat-widget .p-3').style.display = minimized ? 'none' : '';
+  });
+
+  // ── Init ─────────────────────────────────────────────────────────
+  loadProducts();
+  updateCartBadge();
+</script>
+</body></html>
+
+

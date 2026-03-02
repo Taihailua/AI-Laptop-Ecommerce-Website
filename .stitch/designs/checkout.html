@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Laptop Shopping Cart and Checkout Page</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0d1117",
+                        "card-dark": "#161b22",
+                        "border-dark": "#30363d",
+                        "text-muted": "#8b949e",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top Nav Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark px-10 py-4 bg-card-dark">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<span class="material-symbols-outlined text-3xl">laptop_mac</span>
+<h2 class="text-slate-100 text-xl font-bold leading-tight tracking-tight">TechShop</h2>
+</div>
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full border border-border-dark focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<div class="text-text-muted flex border-none bg-background-dark items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-100 focus:outline-0 focus:ring-0 border-none bg-background-dark focus:border-none h-full placeholder:text-text-muted px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search laptops..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-slate-100 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Laptops</a>
+<a class="text-slate-100 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Accessories</a>
+<a class="text-slate-100 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Support</a>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-border-dark" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDco2a2JfMi7EQAfuHXtBqMO9ooF3HqjBPhwP_LmsSVDdAqhBCBECjSKZUVyv9meM4IKr2q_KsumE1Upz64497gPj52FAFI2eEx3YjpLTOkoRG80Bu09JmjjvV7MgCNbbcSyQN88ucBhc_hLxSu4j34sTRgngbr7f6gDlbqwVaU2wfmeu4dIUhihBchCqJ5TV7pv_wVPMWFqUvshJJ_y1yHTikPu0BbIFcfvnq_TdzzzoKlH1WScRMN30mIozAz_n0NI-25mTI0qexH");'></div>
+</div>
+</header>
+<!-- Main Content Layout -->
+<main class="layout-container flex h-full grow flex-col py-10 px-10 xl:px-40">
+<div class="mb-8">
+<h1 class="text-slate-100 text-[32px] font-bold leading-tight tracking-tight">Shopping Cart &amp; Checkout</h1>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+<!-- LEFT COLUMN: Cart Items -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="bg-card-dark border border-border-dark rounded-xl p-6 shadow-[0_0_15px_rgba(43,108,238,0.05)]">
+<h2 class="text-slate-100 text-[22px] font-bold leading-tight tracking-tight mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">shopping_cart</span>
+                            Your Cart
+                        </h2>
+<div class="flex flex-col gap-6">
+<!-- Cart Item 1 -->
+<div class="flex gap-4 pb-6 border-b border-border-dark">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg h-24 w-32 border border-border-dark bg-background-dark" data-alt="MacBook Pro M3 laptop on a desk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAgubFGcgV__bx12Yo0qTRneCTWgTMRuziR6qunHZ-G5aP5FoW1EoJ1u-zZ_79kUxmZ9ndd4-HlV9GXXp5hgl8mZxNGdRqBZSNGiameFNWUmekTh7OZadU-5upuaTwq-W8yj4GckoJ8-ov0ndjDUW9sq_7RuWD8VVUuzsPInDb9oQDDoxvfTGkSqby8zE26MPA54Cyyykc6UdV4a4ImrkUeJowxRxezuW9wV_PciI7mF-E5tGbv7qaqbs7tGp5lNmThJCNdES99P9yk");'></div>
+<div class="flex flex-1 flex-col justify-between py-1">
+<div>
+<div class="flex justify-between items-start">
+<p class="text-slate-100 text-lg font-bold leading-normal">MacBook Pro M3</p>
+<p class="text-slate-100 text-lg font-bold leading-normal">$1,999.00</p>
+</div>
+<p class="text-text-muted text-sm font-medium leading-normal mt-1">Apple | Space Gray</p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex items-center gap-3 border border-border-dark rounded-lg p-1 bg-background-dark">
+<button class="text-text-muted hover:text-slate-100 transition-colors flex h-7 w-7 items-center justify-center rounded-md hover:bg-border-dark cursor-pointer">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<input class="text-slate-100 text-sm font-medium w-8 p-0 text-center bg-transparent border-none focus:ring-0 [appearance:textfield] [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:appearance-none" type="number" value="1"/>
+<button class="text-text-muted hover:text-slate-100 transition-colors flex h-7 w-7 items-center justify-center rounded-md hover:bg-border-dark cursor-pointer">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<button class="text-red-400 hover:text-red-300 transition-colors text-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">delete</span> Remove
+                                        </button>
+</div>
+</div>
+</div>
+<!-- Cart Item 2 -->
+<div class="flex gap-4">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg h-24 w-32 border border-border-dark bg-background-dark" data-alt="Dell XPS 15 laptop open" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBX5WEsQeEZk81NMOlc-jkXzj-qJsGiHywV-6pBn2IRshKF-CNwHSRuv0ZDGLlOlbydmB7AbsQYaZ8LoMv4CN22njlQi8Py6CJrCRIgbHs9MV_AHjtgSC_-q2lziVpMT5x9P6pLbNA3iK-CDyfoYfD9gV1Obd9nmBHTlaF8cJ5l5Y_lO5cCWuLkyxD653ryUlhC_QFS2_5SfHG_0OI0KyX0KlBFf55qo7CKMBWmHYXeL0FBTXlZBJsTK5u5MNmxwBGoAmFCJ0hHWvdq");'></div>
+<div class="flex flex-1 flex-col justify-between py-1">
+<div>
+<div class="flex justify-between items-start">
+<p class="text-slate-100 text-lg font-bold leading-normal">Dell XPS 15</p>
+<p class="text-slate-100 text-lg font-bold leading-normal">$1,499.00</p>
+</div>
+<p class="text-text-muted text-sm font-medium leading-normal mt-1">Dell | Silver</p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex items-center gap-3 border border-border-dark rounded-lg p-1 bg-background-dark">
+<button class="text-text-muted hover:text-slate-100 transition-colors flex h-7 w-7 items-center justify-center rounded-md hover:bg-border-dark cursor-pointer">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<input class="text-slate-100 text-sm font-medium w-8 p-0 text-center bg-transparent border-none focus:ring-0 [appearance:textfield] [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:appearance-none" type="number" value="1"/>
+<button class="text-text-muted hover:text-slate-100 transition-colors flex h-7 w-7 items-center justify-center rounded-md hover:bg-border-dark cursor-pointer">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<button class="text-red-400 hover:text-red-300 transition-colors text-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">delete</span> Remove
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Checkout Form & Summary -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Order Summary -->
+<div class="bg-card-dark border border-border-dark rounded-xl p-6 shadow-[0_0_15px_rgba(43,108,238,0.05)]">
+<h3 class="text-slate-100 text-lg font-bold mb-4">Order Summary</h3>
+<div class="flex flex-col gap-3 mb-6">
+<div class="flex justify-between text-text-muted text-sm">
+<span>Subtotal</span>
+<span class="text-slate-100">$3,498.00</span>
+</div>
+<div class="flex justify-between text-text-muted text-sm">
+<span>Shipping</span>
+<span class="text-slate-100">Free</span>
+</div>
+<div class="flex justify-between text-text-muted text-sm">
+<span>Taxes</span>
+<span class="text-slate-100">$279.84</span>
+</div>
+<div class="border-t border-border-dark pt-3 mt-1 flex justify-between items-center">
+<span class="text-slate-100 font-bold">Total</span>
+<span class="text-primary text-xl font-bold">$3,777.84</span>
+</div>
+</div>
+</div>
+<!-- Checkout Form -->
+<div class="bg-card-dark border border-border-dark rounded-xl p-6 shadow-[0_0_15px_rgba(43,108,238,0.05)] relative overflow-hidden">
+<!-- Subtle neon glow accent -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 blur-[50px] rounded-full pointer-events-none"></div>
+<h2 class="text-slate-100 text-[22px] font-bold leading-tight tracking-tight mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+                            Checkout Details
+                        </h2>
+<form class="flex flex-col gap-5">
+<div class="flex flex-col gap-2">
+<label class="text-slate-100 text-sm font-medium">Full Name (Họ và tên)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted text-sm">person</span>
+<input class="w-full bg-background-dark border border-border-dark rounded-lg py-2.5 pl-10 pr-4 text-slate-100 text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-border-dark" placeholder="John Doe" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-slate-100 text-sm font-medium">Phone Number (Số điện thoại)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted text-sm">call</span>
+<input class="w-full bg-background-dark border border-border-dark rounded-lg py-2.5 pl-10 pr-4 text-slate-100 text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-border-dark" placeholder="0912 345 678" type="tel"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-slate-100 text-sm font-medium">ID Card Number (Số CCCD)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted text-sm">badge</span>
+<input class="w-full bg-background-dark border border-border-dark rounded-lg py-2.5 pl-10 pr-4 text-slate-100 text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-border-dark" placeholder="012345678901" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-slate-100 text-sm font-medium">Delivery Address (Địa chỉ giao hàng)</label>
+<div class="relative">
+<span class="absolute left-3 top-3 material-symbols-outlined text-text-muted text-sm">location_on</span>
+<textarea class="w-full bg-background-dark border border-border-dark rounded-lg py-2.5 pl-10 pr-4 text-slate-100 text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-border-dark resize-none" placeholder="123 Tech Street, District 1, HCMC" rows="3"></textarea>
+</div>
+</div>
+<button class="mt-4 w-full bg-primary hover:bg-blue-500 text-white font-bold text-base py-3.5 rounded-lg shadow-[0_0_15px_rgba(43,108,238,0.4)] hover:shadow-[0_0_20px_rgba(43,108,238,0.6)] transition-all flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+                                Đặt Hàng
+                            </button>
+</form>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

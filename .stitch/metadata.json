@@ -1,0 +1,53 @@
+{
+  "name": "projects/10462836571248083834",
+  "projectId": "10462836571248083834",
+  "title": "AI Laptop Ecommerce",
+  "visibility": "PRIVATE",
+  "createTime": "2026-03-15T13:34:34.233161Z",
+  "updateTime": "2026-03-15T13:52:00.000000Z",
+  "projectType": "PROJECT_DESIGN",
+  "origin": "STITCH",
+  "deviceType": "DESKTOP",
+  "designTheme": {
+    "colorMode": "DARK",
+    "font": "SPACE_GROTESK",
+    "roundness": "ROUND_EIGHT",
+    "customColor": "#2b6cee",
+    "saturation": 2
+  },
+  "screens": {
+    "index": {
+      "id": "8ccc74274714413f96cb6fe0878e7968",
+      "sourceScreen": "projects/10462836571248083834/screens/8ccc74274714413f96cb6fe0878e7968",
+      "x": 0, "y": 0, "width": 1280, "height": 1164
+    },
+    "admin": {
+      "id": "a67c5ac4422240dc917581646ecfbd93",
+      "sourceScreen": "projects/10462836571248083834/screens/a67c5ac4422240dc917581646ecfbd93",
+      "x": 1380, "y": 0, "width": 1280, "height": 1024
+    },
+    "checkout": {
+      "id": "c226768263754f708e4f6194cfe0f9d6",
+      "sourceScreen": "projects/10462836571248083834/screens/c226768263754f708e4f6194cfe0f9d6",
+      "x": 0, "y": 1264, "width": 1280, "height": 1089
+    },
+    "track-order": {
+      "id": "add6f231382d4703a972e8274d0262a5",
+      "sourceScreen": "projects/10462836571248083834/screens/add6f231382d4703a972e8274d0262a5",
+      "x": 1380, "y": 1264, "width": 1280, "height": 1100
+    },
+    "admin-login": {
+      "id": "71c1a81a37724f819e40f0557b4601d1",
+      "sourceScreen": "projects/10462836571248083834/screens/71c1a81a37724f819e40f0557b4601d1",
+      "x": 0, "y": 2564, "width": 1280, "height": 1024
+    },
+    "admin-products": {
+      "id": "26d9c20e6d0f480ca1f6ef5f00538a41",
+      "sourceScreen": "projects/10462836571248083834/screens/26d9c20e6d0f480ca1f6ef5f00538a41",
+      "x": 1380, "y": 2564, "width": 1280, "height": 1024
+    }
+  },
+  "metadata": {
+    "userRole": "OWNER"
+  }
+}
