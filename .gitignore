@@ -32,6 +32,4 @@ Thumbs.db
 # Logs
 *.log
 logs/
-
-
-docker-compose.yml
+package-lock.json
