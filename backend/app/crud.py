@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from . import models, schemas
 from passlib.context import CryptContext
 
@@ -52,10 +52,28 @@ def create_customer(db: Session, customer: schemas.CustomerCreate):
 
 # --- ORDER ---
 def get_orders(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Order).offset(skip).limit(limit).all()
+    return (
+        db.query(models.Order)
+        .options(
+            joinedload(models.Order.customer),
+            joinedload(models.Order.items).joinedload(models.OrderItem.product),
+        )
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 def get_order_by_phone(db: Session, phone_number: str):
-    return db.query(models.Order).join(models.Customer).filter(models.Customer.phone_number == phone_number).all()
+    return (
+        db.query(models.Order)
+        .join(models.Customer)
+        .options(
+            joinedload(models.Order.customer),
+            joinedload(models.Order.items).joinedload(models.OrderItem.product),
+        )
+        .filter(models.Customer.phone_number == phone_number)
+        .all()
+    )
 
 def create_order(db: Session, order_data: schemas.OrderCreate):
     # Tìm hoặc tạo khách hàng
