@@ -5,6 +5,7 @@ from langgraph.prebuilt import create_react_agent
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from .. import crud
+from . import rag
 
 # Khởi tạo model Gemini
 llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite-preview", temperature=0.2)
@@ -274,21 +275,56 @@ def draft_order(customer_name: str, phone_number: str, product_ids: list[int], q
     finally:
         db.close()
 
-tools = [search_laptops, compare_laptops, highlight_product_advantages, generate_product_description, explain_specs, draft_order]
+@tool
+def semantic_search_laptops(query: str, top_k: int = 5) -> str:
+    """
+    Search for laptops using RAG (semantic similarity).
+    Use this tool when the user asks for recommendations with descriptive queries.
+    This uses AI-powered semantic search (not just keyword matching).
+    Args:
+        query: Descriptive search query (e.g., 'laptop gaming mạnh dengan card đồ họa cao', 'máy tính cho lập trình với RAM lớn')
+        top_k: Number of results to return (default 5)
+    """
+    try:
+        products = rag.semantic_search_products(query, top_k=top_k)
+        
+        if not products:
+            return "Không tìm thấy sản phẩm phù hợp với tìm kiếm của bạn."
+        
+        result = "Kết quả tìm kiếm (dựa trên semantic search - AI hiểu ý nghĩa):\n"
+        for i, p in enumerate(products, 1):
+            specs_text = ""
+            if p.get("specs") and isinstance(p["specs"], dict):
+                specs_text = " | ".join(f"{k}: {v}" for k, v in p["specs"].items())
+            
+            result += (
+                f"{i}. [ID: {p.get('id')}] **{p.get('name')}** (Hãng: {p.get('brand')})\n"
+                f"   - Giá: {p.get('price', 0):,.0f} VND\n"
+                f"   - Cấu hình: {specs_text or 'N/A'}\n"
+                f"   - Tồn kho: {p.get('stock', 0)} cái\n"
+                f"   - Độ phù hợp: {(1 - p.get('relevance_score', 0)) * 100:.1f}%\n"
+            )
+        
+        return result
+    except Exception as e:
+        return f"Lỗi khi thực hiện semantic search: {str(e)}"
+
+tools = [search_laptops, compare_laptops, highlight_product_advantages, generate_product_description, explain_specs, semantic_search_laptops, draft_order]
 
 SYSTEM_PROMPT = (
     "Bạn là trợ lý bán hàng AI cho website TechShop - chuyên bán Laptop. "
     "Nhiệm vụ của bạn:\n"
-    "1. Tư vấn laptop phù hợp: Khi khách hỏi về laptop cho mục đích cụ thể (gaming, coding, văn phòng, v.v.) hoặc có ngân sách, NGAY LẬP TỨC dùng tool search_laptops để tìm sản phẩm. Tool sẽ tự động filter dựa trên specs (văn phòng: CPU nhẹ, RAM ít; gaming: GPU mạnh, RAM nhiều).\n"
-    "2. Khi tìm sản phẩm theo giá hoặc use case, gọi search_laptops với query là brand/CPU cụ thể (ví dụ: 'Asus', 'i5', 'gaming') hoặc query='' (chuỗi rỗng) để lấy tất cả sản phẩm.\n"
-    "3. So sánh sản phẩm: Khi khách hỏi so sánh các sản phẩm đã đề cập, hãy lấy ID từ kết quả search trước đó trong cuộc hội thoại và gọi tool compare_laptops. KHÔNG tự so sánh mà không dùng tool.\n"
-    "4. Nhấn mạnh ưu điểm: Khi khách hỏi điểm nổi bật của 1 sản phẩm, dùng tool highlight_product_advantages.\n"
-    "5. Tạo mô tả: Khi cần mô tả chi tiết, dùng tool generate_product_description để tạo từ specs.\n"
-    "6. Giải thích specs: Nếu khách không biết specs, dùng tool explain_specs để hướng dẫn specs cơ bản cho mục đích sử dụng.\n"
-    "7. Xử lý mua hàng: Nếu khách muốn mua, hỏi thông tin đầy đủ: Họ tên, Số điện thoại (bắt buộc), CCCD và Địa chỉ (khuyến khích). Sau đó gọi tool draft_order.\n"
-    "8. Tương tác thông minh: Nhớ ngữ cảnh, khuyến khích hỏi thêm, gợi ý phụ kiện, xử lý câu hỏi ngoài lề bằng cách chuyển hướng.\n"
-    "Lưu ý: Giá luôn tính bằng VND đầy đủ. '20 triệu' = 20000000, '1.5 triệu' = 1500000.\n"
-    "Luôn trả lời bằng tiếng Việt, thân thiện, nhiệt tình, và chuyên nghiệp. Ưu tiên dùng tool thay vì hỏi thêm."
+    "1. TƯ VẤN LAPTOP VỚI RAG (Semantic Search): Khi khách hỏi laptop với mô tả chi tiết hoặc yêu cầu phức tạp, "
+    "NGAY LẬP TỨC dùng tool semantic_search_laptops thay vì search_laptops. "
+    "Ví dụ: 'laptop cho lập trình Python với RAM cao', 'máy gaming pin lâu', 'laptop nhẹ cho sinh viên dưới 15 triệu'. "
+    "Tool semantic_search_laptops sẽ dùng AI hiểu ý nghĩa câu, không chỉ keyword matching.\n"
+    "2. FALLBACK: Nếu semantic search không tìm thấy, dùng search_laptops với keyword cụ thể (brand, CPU, giá).\n"
+    "3. So sánh sản phẩm: Khi khách hỏi so sánh các sản phẩm đã đề cập, lấy ID từ kết quả search và gọi compare_laptops.\n"
+    "4. Nhấn mạnh ưu điểm: Dùng highlight_product_advantages khi khách hỏi điểm nổi bật.\n"
+    "5. Giải thích specs: Dùng explain_specs nếu khách không hiểu specs.\n"
+    "6. Xử lý mua hàng: Hỏi thông tin khách (Họ tên, Số điện thoại, CCCD, Địa chỉ), rồi gọi draft_order.\n"
+    "7. Lưu ý: Giá tính bằng VND đầy đủ. Luôn trả lời tiếng Việt, thân thiện, chuyên nghiệp.\n"
+    "8. QUAN TRỌNG: Ưu tiên dùng semantic_search_laptops cho các câu hỏi mô tả, dùng search_laptops cho keyword ngắn."
 )
 
 # Tạo agent bằng langgraph prebuilt API (tương thích LangChain 0.3+)
