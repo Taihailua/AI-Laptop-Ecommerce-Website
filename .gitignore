@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+
+# Environment files (QUAN TRỌNG: không commit .env thực tế)
+.env
+!.env.example
+
+# Database
+*.sqlite3
+*.db
+
+# Node
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

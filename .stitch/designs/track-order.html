@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tra Cứu Đơn Hàng</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#2b6cee",
+          "background-light": "#f6f6f8",
+          "background-dark": "#0d1117",
+          "surface-dark": "#161b22",
+          "border-dark": "#30363d",
+        },
+        fontFamily: {
+          "display": ["Space Grotesk", "sans-serif"]
+        },
+        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .glow-border:focus-within {
+    box-shadow: 0 0 10px rgba(43, 108, 238, 0.5);
+    border-color: #2b6cee;
+  }
+  .glow-button:hover {
+    box-shadow: 0 0 15px rgba(43, 108, 238, 0.6);
+  }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark px-10 py-4 bg-surface-dark sticky top-0 z-50 shadow-sm">
+<div class="flex items-center gap-8 w-full max-w-[1200px] mx-auto">
+<div class="flex items-center gap-4 text-primary">
+<span class="material-symbols-outlined text-2xl">laptop_mac</span>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">TechShop Pro</h2>
+</div>
+<div class="flex items-center gap-9">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Sản Phẩm</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Khuyến Mãi</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Trợ Giúp</a>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 h-10 max-w-64 glow-border transition-shadow rounded-lg border border-border-dark">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full overflow-hidden">
+<div class="text-slate-400 dark:text-slate-500 flex bg-white dark:bg-[#0d1117] items-center justify-center pl-3">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-white dark:bg-[#0d1117] focus:border-none h-full placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 text-sm font-normal leading-normal" placeholder="Tìm kiếm laptop..." value=""/>
+</div>
+</label>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold leading-normal transition-colors hover:bg-primary/90 glow-button">
+<span>Đăng nhập</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-border-dark cursor-pointer" data-alt="User avatar placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAUEJMvPVSO3smX14LsVC5T9msqs_TFIXz91Sglculo3bodUmgGvRfdo9CanyILnlz8hmXAJAXAqTfP5n2Eh-sht5j4yhKZm_CcH0P3D38BpF5n-t716uOz0DbGU-oifzHXwKU37zZ6Iku-QMDNlE46_n2-UXzSQYSRR5rq2xMdyti8ajYs90eitr-pn1Qi5INle6iSr8ArsOlAcXUb8pYdJY6o_S2kYQG9gLk91JuNtDkEV3IBDrTgRYhARLM9y0lMT1poHGcUaoyj");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center py-12 px-4 w-full max-w-[1200px] mx-auto">
+<!-- Hero / Search Section -->
+<div class="w-full max-w-3xl flex flex-col gap-8 text-center mb-16">
+<div class="flex flex-col gap-3">
+<h1 class="text-slate-900 dark:text-white text-4xl md:text-5xl font-black leading-tight tracking-tight">Tra Cứu Đơn Hàng</h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg font-normal leading-relaxed max-w-xl mx-auto">Nhập số điện thoại mua hàng để kiểm tra tình trạng xử lý và hành trình vận chuyển đơn hàng của bạn.</p>
+</div>
+<div class="flex flex-1 justify-center w-full mt-4">
+<label class="flex flex-col h-14 md:h-16 w-full max-w-[600px] glow-border transition-shadow rounded-xl border border-border-dark bg-white dark:bg-surface-dark shadow-lg">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full overflow-hidden">
+<div class="text-slate-400 dark:text-slate-500 flex items-center justify-center pl-5">
+<span class="material-symbols-outlined text-[24px]">call</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent focus:border-none h-full placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base md:text-lg font-medium leading-normal" placeholder="Nhập số điện thoại của bạn..." value="0901234567"/>
+<div class="flex items-center justify-center pr-2 bg-transparent">
+<button class="flex min-w-[100px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 md:h-12 px-6 bg-primary text-white text-sm md:text-base font-bold leading-normal transition-all hover:bg-primary/90 glow-button">
+<span>Tra Cứu</span>
+</button>
+</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Results Section -->
+<div class="w-full max-w-4xl flex flex-col gap-6">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold mb-2">Kết quả tra cứu (2 đơn hàng)</h3>
+<!-- Order Card 1: Đang giao -->
+<div class="flex flex-col rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark overflow-hidden shadow-md transition-all hover:shadow-lg dark:hover:border-slate-600">
+<!-- Card Header -->
+<div class="flex flex-wrap items-center justify-between gap-4 p-5 border-b border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-[#1c2128]">
+<div class="flex items-center gap-6">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold tracking-wider mb-1">Mã Đơn Hàng</p>
+<p class="text-slate-900 dark:text-white text-base font-bold">#DH-847291</p>
+</div>
+<div class="hidden sm:block w-px h-10 bg-slate-200 dark:bg-border-dark"></div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold tracking-wider mb-1">Ngày Đặt</p>
+<p class="text-slate-900 dark:text-slate-200 text-sm font-medium">10/10/2023 14:30</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm font-semibold border border-blue-200 dark:border-blue-800/50">
+<span class="material-symbols-outlined text-[16px]">local_shipping</span>
+                        Đang giao hàng
+                    </span>
+<button class="text-primary hover:text-primary/80 font-medium text-sm transition-colors flex items-center gap-1">
+                        Chi tiết <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Card Body - Items -->
+<div class="p-5 flex flex-col gap-4">
+<div class="flex items-center gap-4">
+<div class="size-20 rounded-lg bg-slate-100 dark:bg-[#0d1117] border border-slate-200 dark:border-border-dark flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-4xl text-slate-400">laptop_mac</span>
+</div>
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-medium text-base mb-1">MacBook Pro 14" M2 Pro 2023 - 16GB/512GB</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Space Gray | Số lượng: 1</p>
+</div>
+<div class="text-right">
+<p class="text-slate-900 dark:text-white font-bold text-base">45.990.000đ</p>
+</div>
+</div>
+</div>
+<!-- Card Footer -->
+<div class="p-5 border-t border-slate-200 dark:border-border-dark flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span> Dự kiến giao: 12/10/2023
+                </p>
+<div class="flex items-center gap-3">
+<span class="text-slate-500 dark:text-slate-400 text-sm">Tổng cộng:</span>
+<span class="text-primary font-bold text-xl">45.990.000đ</span>
+</div>
+</div>
+</div>
+<!-- Order Card 2: Chờ xử lý -->
+<div class="flex flex-col rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark overflow-hidden shadow-md transition-all hover:shadow-lg dark:hover:border-slate-600 opacity-80 hover:opacity-100">
+<!-- Card Header -->
+<div class="flex flex-wrap items-center justify-between gap-4 p-5 border-b border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-[#1c2128]">
+<div class="flex items-center gap-6">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold tracking-wider mb-1">Mã Đơn Hàng</p>
+<p class="text-slate-900 dark:text-white text-base font-bold">#DH-847285</p>
+</div>
+<div class="hidden sm:block w-px h-10 bg-slate-200 dark:bg-border-dark"></div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold tracking-wider mb-1">Ngày Đặt</p>
+<p class="text-slate-900 dark:text-slate-200 text-sm font-medium">05/10/2023 09:15</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold border border-amber-200 dark:border-amber-800/50">
+<span class="material-symbols-outlined text-[16px]">hourglass_empty</span>
+                        Chờ xử lý
+                    </span>
+<button class="text-slate-500 hover:text-primary dark:hover:text-primary font-medium text-sm transition-colors flex items-center gap-1">
+                        Chi tiết <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Card Body - Items -->
+<div class="p-5 flex flex-col gap-4">
+<div class="flex items-center gap-4">
+<div class="size-20 rounded-lg bg-slate-100 dark:bg-[#0d1117] border border-slate-200 dark:border-border-dark flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-4xl text-slate-400">headphones</span>
+</div>
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-medium text-base mb-1">Tai nghe Sony WH-1000XM5</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Đen | Số lượng: 1</p>
+</div>
+<div class="text-right">
+<p class="text-slate-900 dark:text-white font-bold text-base">7.490.000đ</p>
+</div>
+</div>
+</div>
+<!-- Card Footer -->
+<div class="p-5 border-t border-slate-200 dark:border-border-dark flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span> Đang chờ xác nhận từ cửa hàng
+                </p>
+<div class="flex items-center gap-3">
+<span class="text-slate-500 dark:text-slate-400 text-sm">Tổng cộng:</span>
+<span class="text-slate-900 dark:text-white font-bold text-xl">7.490.000đ</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
