@@ -95,101 +95,13 @@ export async function fetchAllOrders() {
 }
 
 // ─── AI Chat ──────────────────────────────────────────────────────────────────
-export async function sendChatMessage(sessionId, message, customer = {}) {
+export async function sendChatMessage(sessionId, message) {
   const res = await fetch(`${API_BASE}/api/chat/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      session_id: sessionId,
-      message,
-      customer_name: customer.customer_name || null,
-      customer_phone: customer.customer_phone || null,
-      customer_address: customer.customer_address || null
-    })
+    body: JSON.stringify({ session_id: sessionId, message })
   });
   if (!res.ok) throw new Error('AI chat error');
-  return res.json();
-}
-
-export async function sendAssistantMessage(sessionId, message) {
-  const res = await fetch(`${API_BASE}/api/chat/assistant`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      session_id: sessionId,
-      message
-    })
-  });
-  if (!res.ok) throw new Error('AI assistant error');
-  return res.json();
-}
-
-export async function fetchTicketDetail(ticketId) {
-  const res = await fetch(`${API_BASE}/api/chat/tickets/${Number(ticketId)}`);
-  if (!res.ok) throw new Error('Không lấy được chi tiết ticket.');
-  return res.json();
-}
-
-export async function fetchTicketsByPhone(phoneNumber) {
-  const res = await fetch(`${API_BASE}/api/chat/tickets/by-phone/${encodeURIComponent(phoneNumber)}`);
-  if (!res.ok) throw new Error('Không lấy được danh sách ticket theo số điện thoại.');
-  return res.json();
-}
-
-export async function submitTicketSatisfaction(ticketId, score, note = '') {
-  const res = await fetch(`${API_BASE}/api/chat/tickets/${Number(ticketId)}/satisfaction`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ score: Number(score), note: note || null })
-  });
-  if (!res.ok) throw new Error('Không gửi được đánh giá hài lòng.');
-  return res.json();
-}
-
-export async function fetchTicketSatisfactionSummary() {
-  const res = await fetch(`${API_BASE}/api/chat/tickets/summary/satisfaction`);
-  if (!res.ok) throw new Error('Không tải được thống kê hài lòng.');
-  return res.json();
-}
-
-export async function fetchAdminTickets(status = '') {
-  const url = status
-    ? `${API_BASE}/api/chat/admin/tickets?status=${encodeURIComponent(status)}`
-    : `${API_BASE}/api/chat/admin/tickets`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Không tải được danh sách ticket quản trị.');
-  return res.json();
-}
-
-export async function updateAdminTicket(ticketId, payload) {
-  const res = await fetch(`${API_BASE}/api/chat/admin/tickets/${Number(ticketId)}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) {
-    let message = 'Không cập nhật được ticket.';
-    try {
-      const data = await res.json();
-      if (data?.detail) message = data.detail;
-    } catch (_) {}
-    throw new Error(message);
-  }
-  return res.json();
-}
-
-export async function assessTicketSatisfactionByAI(ticketId) {
-  const res = await fetch(`${API_BASE}/api/chat/admin/tickets/${Number(ticketId)}/ai-satisfaction`, {
-    method: 'POST'
-  });
-  if (!res.ok) {
-    let message = 'AI không đánh giá được mức độ hài lòng.';
-    try {
-      const data = await res.json();
-      if (data?.detail) message = data.detail;
-    } catch (_) {}
-    throw new Error(message);
-  }
   return res.json();
 }
 

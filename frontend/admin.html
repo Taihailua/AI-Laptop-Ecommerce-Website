@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Admin - Quản lý đơn hàng</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script>
         tailwind.config = {
@@ -13,7 +13,7 @@
             theme: {
                 extend: {
                     colors: { "primary": "#2b6cee", "background-light": "#f6f6f8", "background-dark": "#101622" },
-                    fontFamily: { "display": ["Plus Jakarta Sans", "ui-sans-serif", "system-ui"] },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
                 },
             },
         }
@@ -28,7 +28,6 @@
         </div>
         <div class="flex gap-4">
             <a href="admin.html" class="text-primary font-bold border-b-2 border-primary">Đơn hàng</a>
-            <a href="admin-tickets.html" class="text-slate-500 hover:text-primary font-medium">Ticket CSKH</a>
             <a href="admin-products.html" class="text-slate-500 hover:text-primary font-medium">Sản phẩm</a>
             <button onclick="logout()" class="text-red-500 hover:text-red-600 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-lg">logout</span> Thoát

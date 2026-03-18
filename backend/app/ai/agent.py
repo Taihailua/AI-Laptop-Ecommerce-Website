@@ -1,25 +1,13 @@
 import os
-import re
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from .. import crud
-from . import rag
 
 # Khởi tạo model Gemini
 llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite-preview", temperature=0.2)
-
-TICKET_CATEGORY_CODES = {
-    "PRODUCT_CONSULTATION": "Tu van san pham",
-    "ORDER_TRACKING": "Theo doi don hang",
-    "RETURN_REFUND": "Doi tra hoan tien",
-    "PAYMENT_ISSUE": "Van de thanh toan",
-    "TECHNICAL_SUPPORT": "Ho tro ky thuat",
-    "COMPLAINT": "Khieu nai",
-    "OTHER": "Khac",
-}
 
 @tool
 def search_laptops(query: str, max_price: float = None, min_price: float = None) -> str:
@@ -286,205 +274,25 @@ def draft_order(customer_name: str, phone_number: str, product_ids: list[int], q
     finally:
         db.close()
 
-@tool
-def semantic_search_laptops(query: str, top_k: int = 5) -> str:
-    """
-    Search for laptops using RAG (semantic similarity).
-    Use this tool when the user asks for recommendations with descriptive queries.
-    This uses AI-powered semantic search (not just keyword matching).
-    Args:
-        query: Descriptive search query (e.g., 'laptop gaming mạnh dengan card đồ họa cao', 'máy tính cho lập trình với RAM lớn')
-        top_k: Number of results to return (default 5)
-    """
-    try:
-        products = rag.semantic_search_products(query, top_k=top_k)
-        
-        if not products:
-            return "Không tìm thấy sản phẩm phù hợp với tìm kiếm của bạn."
-        
-        result = "Kết quả tìm kiếm (dựa trên semantic search - AI hiểu ý nghĩa):\n"
-        for i, p in enumerate(products, 1):
-            specs_text = ""
-            if p.get("specs") and isinstance(p["specs"], dict):
-                specs_text = " | ".join(f"{k}: {v}" for k, v in p["specs"].items())
-            
-            result += (
-                f"{i}. [ID: {p.get('id')}] **{p.get('name')}** (Hãng: {p.get('brand')})\n"
-                f"   - Giá: {p.get('price', 0):,.0f} VND\n"
-                f"   - Cấu hình: {specs_text or 'N/A'}\n"
-                f"   - Tồn kho: {p.get('stock', 0)} cái\n"
-                f"   - Độ phù hợp: {(1 - p.get('relevance_score', 0)) * 100:.1f}%\n"
-            )
-        
-        return result
-    except Exception as e:
-        return f"Lỗi khi thực hiện semantic search: {str(e)}"
-
-tools = [search_laptops, compare_laptops, highlight_product_advantages, generate_product_description, explain_specs, semantic_search_laptops, draft_order]
+tools = [search_laptops, compare_laptops, highlight_product_advantages, generate_product_description, explain_specs, draft_order]
 
 SYSTEM_PROMPT = (
     "Bạn là trợ lý bán hàng AI cho website TechShop - chuyên bán Laptop. "
     "Nhiệm vụ của bạn:\n"
-    "1. TƯ VẤN LAPTOP VỚI RAG (Semantic Search): Khi khách hỏi laptop với mô tả chi tiết hoặc yêu cầu phức tạp, "
-    "NGAY LẬP TỨC dùng tool semantic_search_laptops thay vì search_laptops. "
-    "Ví dụ: 'laptop cho lập trình Python với RAM cao', 'máy gaming pin lâu', 'laptop nhẹ cho sinh viên dưới 15 triệu'. "
-    "Tool semantic_search_laptops sẽ dùng AI hiểu ý nghĩa câu, không chỉ keyword matching.\n"
-    "2. FALLBACK: Nếu semantic search không tìm thấy, dùng search_laptops với keyword cụ thể (brand, CPU, giá).\n"
-    "3. So sánh sản phẩm: Khi khách hỏi so sánh các sản phẩm đã đề cập, lấy ID từ kết quả search và gọi compare_laptops.\n"
-    "4. Nhấn mạnh ưu điểm: Dùng highlight_product_advantages khi khách hỏi điểm nổi bật.\n"
-    "5. Giải thích specs: Dùng explain_specs nếu khách không hiểu specs.\n"
-    "6. Xử lý mua hàng: Hỏi thông tin khách (Họ tên, Số điện thoại, CCCD, Địa chỉ), rồi gọi draft_order.\n"
-    "7. Lưu ý: Giá tính bằng VND đầy đủ. Luôn trả lời tiếng Việt, thân thiện, chuyên nghiệp.\n"
-    "8. QUAN TRỌNG: Ưu tiên dùng semantic_search_laptops cho các câu hỏi mô tả, dùng search_laptops cho keyword ngắn."
-)
-
-TICKET_SUPPORT_PROMPT = (
-    "Bạn là chatbot CSKH sau bán hàng của TechShop. "
-    "Phạm vi hỗ trợ của bạn chỉ gồm: theo dõi đơn, thanh toán, đổi trả/hoàn tiền, bảo hành/kỹ thuật, khiếu nại, "
-    "cập nhật thông tin đơn, và hướng dẫn quy trình hỗ trợ. "
-    "KHÔNG tư vấn chọn mua laptop, KHÔNG gợi ý model, KHÔNG upsell sản phẩm. "
-    "Nếu khách hỏi tư vấn mua máy, hãy từ chối lịch sự và hướng họ qua khung chat tư vấn sản phẩm. "
-    "Luôn trả lời ngắn gọn, rõ ràng, tiếng Việt chuyên nghiệp."
+    "1. Tư vấn laptop phù hợp: Khi khách hỏi về laptop cho mục đích cụ thể (gaming, coding, văn phòng, v.v.) hoặc có ngân sách, NGAY LẬP TỨC dùng tool search_laptops để tìm sản phẩm. Tool sẽ tự động filter dựa trên specs (văn phòng: CPU nhẹ, RAM ít; gaming: GPU mạnh, RAM nhiều).\n"
+    "2. Khi tìm sản phẩm theo giá hoặc use case, gọi search_laptops với query là brand/CPU cụ thể (ví dụ: 'Asus', 'i5', 'gaming') hoặc query='' (chuỗi rỗng) để lấy tất cả sản phẩm.\n"
+    "3. So sánh sản phẩm: Khi khách hỏi so sánh các sản phẩm đã đề cập, hãy lấy ID từ kết quả search trước đó trong cuộc hội thoại và gọi tool compare_laptops. KHÔNG tự so sánh mà không dùng tool.\n"
+    "4. Nhấn mạnh ưu điểm: Khi khách hỏi điểm nổi bật của 1 sản phẩm, dùng tool highlight_product_advantages.\n"
+    "5. Tạo mô tả: Khi cần mô tả chi tiết, dùng tool generate_product_description để tạo từ specs.\n"
+    "6. Giải thích specs: Nếu khách không biết specs, dùng tool explain_specs để hướng dẫn specs cơ bản cho mục đích sử dụng.\n"
+    "7. Xử lý mua hàng: Nếu khách muốn mua, hỏi thông tin đầy đủ: Họ tên, Số điện thoại (bắt buộc), CCCD và Địa chỉ (khuyến khích). Sau đó gọi tool draft_order.\n"
+    "8. Tương tác thông minh: Nhớ ngữ cảnh, khuyến khích hỏi thêm, gợi ý phụ kiện, xử lý câu hỏi ngoài lề bằng cách chuyển hướng.\n"
+    "Lưu ý: Giá luôn tính bằng VND đầy đủ. '20 triệu' = 20000000, '1.5 triệu' = 1500000.\n"
+    "Luôn trả lời bằng tiếng Việt, thân thiện, nhiệt tình, và chuyên nghiệp. Ưu tiên dùng tool thay vì hỏi thêm."
 )
 
 # Tạo agent bằng langgraph prebuilt API (tương thích LangChain 0.3+)
 agent_executor = create_react_agent(llm, tools, prompt=SYSTEM_PROMPT)
-
-
-def _llm_result_to_text(result) -> str:
-    content = result.content if hasattr(result, "content") else result
-    if isinstance(content, list):
-        text_parts = []
-        for item in content:
-            if isinstance(item, dict):
-                text_value = item.get("text")
-                if text_value:
-                    text_parts.append(str(text_value))
-            elif isinstance(item, str):
-                text_parts.append(item)
-        if text_parts:
-            return "\n".join(text_parts)
-    return str(content)
-
-
-def _is_sales_consultation_intent(message: str) -> bool:
-    lowered = (message or "").lower()
-    keywords = [
-        "mua laptop",
-        "tu van",
-        "tư vấn",
-        "goi y",
-        "gợi ý",
-        "nen mua",
-        "nên mua",
-        "laptop nao",
-        "laptop nào",
-        "cau hinh",
-        "cấu hình",
-        "gaming",
-        "do hoa",
-        "đồ họa",
-        "hoc tap",
-        "học tập",
-    ]
-    return any(k in lowered for k in keywords)
-
-
-def get_ticket_support_response(message: str, chat_history: list = None) -> str:
-    """
-    CSKH-only response for ticket flow.
-    Strictly avoids product consultation/purchase recommendations.
-    """
-    if _is_sales_consultation_intent(message):
-        return (
-            "Kênh Ticket CSKH chỉ hỗ trợ sau bán hàng (đơn hàng, thanh toán, đổi trả, bảo hành, khiếu nại).\n"
-            "Đối với tư vấn chọn mua laptop, bạn vui lòng sử dụng khung chat tư vấn sản phẩm để được hỗ trợ đúng nhu cầu."
-        )
-
-    history_text = ""
-    if chat_history:
-        lines = []
-        for role, content in chat_history[-10:]:
-            speaker = "Khách" if role == "human" else "CSKH"
-            lines.append(f"{speaker}: {content}")
-        history_text = "\n".join(lines)
-
-    prompt = (
-        f"{TICKET_SUPPORT_PROMPT}\n\n"
-        f"Lịch sử gần đây:\n{history_text or '(trống)'}\n\n"
-        f"Khách hiện tại: {message}\n\n"
-        "Hãy phản hồi theo phạm vi CSKH, tuyệt đối không tư vấn mua sản phẩm."
-    )
-
-    try:
-        result = llm.invoke(prompt)
-        response = _llm_result_to_text(result).strip()
-        if response:
-            return response
-        return "Mình đã ghi nhận yêu cầu CSKH của bạn. Vui lòng cung cấp thêm mã đơn hoặc số điện thoại để hỗ trợ nhanh hơn."
-    except Exception as e:
-        print(f"Ticket CSKH AI Error: {e}")
-        return "Mình đã ghi nhận ticket CSKH. Bạn vui lòng cung cấp mã đơn/số điện thoại và vấn đề cụ thể để mình hỗ trợ tiếp."
-
-
-def classify_ticket_with_llm(message: str) -> tuple[str, str]:
-    """
-    Return (category_code, subject).
-    category_code is one of TICKET_CATEGORY_CODES keys.
-    """
-    prompt = (
-        "Ban la bo phan tiep nhan yeu cau khach hang cho website ban laptop. "
-        "Hay phan loai ticket dua tren noi dung ben duoi vao 1 trong cac nhan: "
-        "PRODUCT_CONSULTATION, ORDER_TRACKING, RETURN_REFUND, PAYMENT_ISSUE, TECHNICAL_SUPPORT, COMPLAINT, OTHER. "
-        "Tra ve dung dinh dang 2 dong:\n"
-        "CATEGORY:<category_code>\n"
-        "SUBJECT:<chu de ngan gon toi da 12 tu>\n\n"
-        f"Noi dung: {message}"
-    )
-
-    try:
-        result = llm.invoke(prompt)
-        content = _llm_result_to_text(result)
-
-        category_code = "OTHER"
-        subject = "Yeu cau ho tro"
-
-        for raw_line in content.splitlines():
-            line = raw_line.strip()
-            if not line:
-                continue
-
-            category_match = re.match(
-                r"^CATEGORY\s*:\s*(PRODUCT_CONSULTATION|ORDER_TRACKING|RETURN_REFUND|PAYMENT_ISSUE|TECHNICAL_SUPPORT|COMPLAINT|OTHER)\s*$",
-                line,
-                flags=re.IGNORECASE,
-            )
-            if category_match:
-                category_code = category_match.group(1).upper()
-                continue
-
-            if re.match(r"^SUBJECT\s*:", line, flags=re.IGNORECASE):
-                subject_candidate = line.split(":", 1)[1].strip()
-                subject_candidate = subject_candidate.strip("\"'")
-                if subject_candidate:
-                    subject = subject_candidate[:120]
-
-        return category_code, subject
-    except Exception:
-        lowered = (message or "").lower()
-        if any(k in lowered for k in ["đơn", "don", "vận chuyển", "giao", "trạng thái", "status"]):
-            return "ORDER_TRACKING", "Yeu cau theo doi don hang"
-        if any(k in lowered for k in ["hoàn tiền", "hoan tien", "đổi", "tra hang", "refund"]):
-            return "RETURN_REFUND", "Yeu cau doi tra hoan tien"
-        if any(k in lowered for k in ["thanh toán", "thanh toan", "payment", "chuyen khoan"]):
-            return "PAYMENT_ISSUE", "Van de thanh toan"
-        if any(k in lowered for k in ["lỗi", "loi", "không hoạt động", "bao hanh", "sua"]):
-            return "TECHNICAL_SUPPORT", "Ho tro ky thuat"
-        if any(k in lowered for k in ["khiếu nại", "khieu nai", "không hài lòng", "that vong"]):
-            return "COMPLAINT", "Khieu nai dich vu"
-        if any(k in lowered for k in ["tư vấn", "tu van", "nên mua", "chon may", "cau hinh"]):
-            return "PRODUCT_CONSULTATION", "Tu van san pham"
-        return "OTHER", "Yeu cau ho tro"
 
 def get_chat_response(message: str, chat_history: list = None) -> str:
     """
@@ -524,59 +332,3 @@ def get_chat_response(message: str, chat_history: list = None) -> str:
     except Exception as e:
         print(f"AI Error: {e}")  # Debug: In lỗi
         return f"Xin lỗi, tôi gặp lỗi kỹ thuật: {str(e)}. Vui lòng thử lại sau."
-
-
-def estimate_customer_satisfaction_from_history(chat_history: list[tuple[str, str]]) -> tuple[int, str]:
-    """
-    Estimate customer satisfaction score (1-5) from ticket conversation history.
-    Returns (score, reason).
-    """
-    if not chat_history:
-        return 3, "Chưa đủ dữ liệu hội thoại để đánh giá chính xác."
-
-    history_text = []
-    for role, content in chat_history[-20:]:
-        speaker = "Khách" if role == "human" else "CSKH"
-        history_text.append(f"{speaker}: {content}")
-    conversation = "\n".join(history_text)
-
-    prompt = (
-        "Bạn là QA nội bộ CSKH. Hãy ước lượng mức độ hài lòng của khách hàng theo thang điểm 1-5 "
-        "dựa trên lịch sử hội thoại dưới đây.\n"
-        "Trả về đúng 2 dòng theo định dạng:\n"
-        "SCORE:<1-5>\n"
-        "REASON:<ly do ngan gon toi da 30 tu>\n\n"
-        f"Hoi thoai:\n{conversation}"
-    )
-
-    try:
-        result = llm.invoke(prompt)
-        content = _llm_result_to_text(result)
-
-        score = 3
-        reason = "Khách chưa thể hiện rõ mức độ hài lòng trong hội thoại."
-
-        for raw_line in content.splitlines():
-            line = raw_line.strip()
-            if not line:
-                continue
-
-            score_match = re.match(r"^SCORE\s*:\s*([1-5])\s*$", line, flags=re.IGNORECASE)
-            if score_match:
-                score = int(score_match.group(1))
-                continue
-
-            if re.match(r"^REASON\s*:", line, flags=re.IGNORECASE):
-                reason_candidate = line.split(":", 1)[1].strip().strip("\"'")
-                if reason_candidate:
-                    reason = reason_candidate[:220]
-
-        return score, reason
-    except Exception:
-        # Heuristic fallback when model is unavailable.
-        joined = " ".join(content for role, content in chat_history if role == "human").lower()
-        if any(k in joined for k in ["cam on", "hài lòng", "hai long", "tot", "ok"]):
-            return 4, "Khách có tín hiệu tích cực trong nội dung phản hồi."
-        if any(k in joined for k in ["khong hai long", "không hài lòng", "cham", "te"]):
-            return 2, "Khách có phản hồi chưa hài lòng về trải nghiệm hỗ trợ."
-        return 3, "Mức độ hài lòng trung tính do chưa có tín hiệu rõ ràng."
