@@ -25,7 +25,7 @@ def get_user_by_username(db: Session, username: str):
 # --- PRODUCT ---
 def get_products(db: Session, skip: int = 0, limit: int = 100, search: str = None):
     query = db.query(models.Product)
-    if search:
+    if search and search.strip():  # Chỉ filter nếu search không rỗng
         query = query.filter(models.Product.name.ilike(f"%{search}%") | models.Product.brand.ilike(f"%{search}%"))
     return query.offset(skip).limit(limit).all()
 
