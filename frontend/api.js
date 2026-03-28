@@ -111,33 +111,6 @@ export async function sendChatMessage(sessionId, message, customer = {}) {
   return res.json();
 }
 
-export async function uploadTicketAttachment(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const res = await fetch(`${API_BASE}/api/chat/attachments`, {
-    method: 'POST',
-    body: formData // No Content-Type header for FormData
-  });
-
-  if (!res.ok) {
-    let message = 'Upload bằng chứng thất bại.';
-    try {
-      const data = await res.json();
-      if (data?.detail) message = data.detail;
-      else if (data?.message) message = data.message;
-    } catch (_) {
-      try {
-        const text = await res.text();
-        if (text) message = text;
-      } catch (_) {}
-    }
-    throw new Error(message);
-  }
-
-  return res.json();
-}
-
 export async function sendAssistantMessage(sessionId, message) {
   const res = await fetch(`${API_BASE}/api/chat/assistant`, {
     method: 'POST',
@@ -196,21 +169,6 @@ export async function updateAdminTicket(ticketId, payload) {
   });
   if (!res.ok) {
     let message = 'Không cập nhật được ticket.';
-    try {
-      const data = await res.json();
-      if (data?.detail) message = data.detail;
-    } catch (_) {}
-    throw new Error(message);
-  }
-  return res.json();
-}
-
-export async function assessTicketSatisfactionByAI(ticketId) {
-  const res = await fetch(`${API_BASE}/api/chat/admin/tickets/${Number(ticketId)}/ai-satisfaction`, {
-    method: 'POST'
-  });
-  if (!res.ok) {
-    let message = 'AI không đánh giá được mức độ hài lòng.';
     try {
       const data = await res.json();
       if (data?.detail) message = data.detail;

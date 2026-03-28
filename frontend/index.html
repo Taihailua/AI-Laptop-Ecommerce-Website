@@ -42,7 +42,6 @@
       Cart,
       sendAssistantMessage,
       sendChatMessage,
-      uploadTicketAttachment,
       checkout,
       trackOrderByPhone,
       fetchTicketDetail,
@@ -159,8 +158,6 @@
       const ticketSessionId = useMemo(() => `ticket_${Math.random().toString(36).slice(2)}`, []);
       const ticketMessagesRef = useRef(null);
       const [ticketInput, setTicketInput] = useState("");
-      const [ticketAttachments, setTicketAttachments] = useState([]);
-      const [isUploadingTicketAttachments, setIsUploadingTicketAttachments] = useState(false);
       const [ticketPhoneLookup, setTicketPhoneLookup] = useState("");
       const [isCheckingPurchase, setIsCheckingPurchase] = useState(false);
       const [isPhoneVerified, setIsPhoneVerified] = useState(false);
@@ -486,57 +483,6 @@
         }
       }
 
-      function validateTicketAttachmentClient(file) {
-        const allowedImageMimes = new Set(["image/jpeg", "image/png", "image/webp"]);
-        const allowedVideoMimes = new Set(["video/mp4"]);
-        const mime = (file?.type || "").toLowerCase();
-        const ext = file?.name ? `.${file.name.split(".").pop().toLowerCase()}` : "";
-
-        // Fallback theo extension khi type không chuẩn
-        const isImage = allowedImageMimes.has(mime) || [".jpg", ".jpeg", ".png", ".webp"].includes(ext);
-        const isVideo = allowedVideoMimes.has(mime) || ext === ".mp4";
-
-        if (!isImage && !isVideo) {
-          return { ok: false, error: "Định dạng không hợp lệ. Chỉ hỗ trợ jpg/png/webp và mp4." };
-        }
-
-        if (isImage) {
-          if (file.size > 5 * 1024 * 1024) return { ok: false, error: "Ảnh vượt quá dung lượng tối đa 5MB." };
-          return { ok: true, normalizedMimeType: allowedImageMimes.has(mime) ? mime : "image/jpeg" };
-        }
-
-        if (isVideo) {
-          if (file.size > 20 * 1024 * 1024) return { ok: false, error: "Video vượt quá dung lượng tối đa 20MB." };
-          return { ok: true, normalizedMimeType: allowedVideoMimes.has(mime) ? mime : "video/mp4" };
-        }
-
-        return { ok: false, error: "Định dạng file không hợp lệ." };
-      }
-
-      function handleTicketAttachmentChange(e) {
-        const files = Array.from(e.target.files || []);
-        if (!files.length) {
-          setTicketAttachments([]);
-          return;
-        }
-
-        const next = files.map((file) => {
-          const v = validateTicketAttachmentClient(file);
-          return {
-            id: Date.now() + Math.random().toString(36).slice(2),
-            file,
-            name: file.name,
-            size: file.size,
-            mimeType: (file?.type || "").toLowerCase(),
-            status: v.ok ? "ready" : "error",
-            error: v.ok ? null : v.error,
-            url: null,
-            uploadedSize: null
-          };
-        });
-        setTicketAttachments(next);
-      }
-
       async function handleSendTicketMessage() {
         const msg = ticketInput.trim();
         if (!msg) return;
@@ -546,56 +492,13 @@
           return;
         }
 
-        if (isUploadingTicketAttachments) return;
-
-        const selectedAttachments = Array.isArray(ticketAttachments) ? ticketAttachments : [];
-        if (selectedAttachments.some((a) => a.status === "error")) {
-          const firstErr = selectedAttachments.find((a) => a.status === "error")?.error || "File không hợp lệ.";
-          pushToast(firstErr, "error");
-          return;
-        }
-
         setTicketInput("");
         appendTicketUserMessage(msg);
         const thinkingId = Date.now() + Math.random();
         setTicketMessages((prev) => [...prev, { id: thinkingId, role: "ai", html: "<em>Đang xử lý ticket...</em>" }]);
 
         try {
-          let proofUrls = [];
-          if (selectedAttachments.length) {
-            setIsUploadingTicketAttachments(true);
-
-            // Set trạng thái uploading cho các file hợp lệ
-            setTicketAttachments((prev) =>
-              prev.map((a) =>
-                selectedAttachments.some((s) => s.id === a.id) && a.status === "ready"
-                  ? { ...a, status: "uploading", error: null }
-                  : a
-              )
-            );
-
-            // Upload tuần tự (POC nhanh)
-            for (const a of selectedAttachments) {
-              if (a.status !== "ready") continue;
-              try {
-                const uploaded = await uploadTicketAttachment(a.file);
-                proofUrls.push(uploaded.url);
-                setTicketAttachments((prev) =>
-                  prev.map((x) =>
-                    x.id === a.id
-                      ? { ...x, status: "uploaded", url: uploaded.url, mimeType: uploaded.mime_type, uploadedSize: uploaded.size, error: null }
-                      : x
-                  )
-                );
-              } catch (err) {
-                setTicketAttachments((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: "error", error: err.message } : x)));
-                throw err;
-              }
-            }
-          }
-
-          const msgToSend = proofUrls.length ? `${msg}\nBANG_CHUNG: ${proofUrls.join(", ")}` : msg;
-          const data = await sendChatMessage(ticketSessionId, msgToSend, {
+          const data = await sendChatMessage(ticketSessionId, msg, {
             customer_phone: ticketPhoneLookup.trim(),
             customer_name: null,
             customer_address: null
@@ -610,9 +513,6 @@
           const recommended = Array.isArray(data.recommended_products) ? data.recommended_products : [];
           const aiHtml = `${formatAiText(data.response)}${renderRecommendedProductsHtml(recommended)}`;
           setTicketMessages((prev) => prev.map((m) => (m.id === thinkingId ? { ...m, html: aiHtml } : m)));
-
-          // Reset attachments sau khi gửi thành công
-          setTicketAttachments([]);
         } catch (err) {
           setTicketMessages((prev) =>
             prev.map((m) =>
@@ -620,8 +520,6 @@
             )
           );
           pushToast("Gửi ticket thất bại.", "error");
-        } finally {
-          setIsUploadingTicketAttachments(false);
         }
       }
 
@@ -1014,10 +912,14 @@
               "div",
               { className: "p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800" },
               React.createElement(
-                "div",
+                "form",
                 {
                   className:
-                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all",
+                  onSubmit: (e) => {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
                 },
                 React.createElement("input", {
                   className:
@@ -1025,19 +927,13 @@
                   placeholder: "Hỏi về cấu hình, giá cả...",
                   type: "text",
                   value: chatInput,
-                  onChange: (e) => setChatInput(e.target.value),
-                  onKeyDown: (e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }
+                  onChange: (e) => setChatInput(e.target.value)
                 }),
                 React.createElement(
                   "button",
                   {
-                    className: "text-primary hover:text-primary/80 flex items-center justify-center p-1",
-                    onClick: handleSendMessage
+                    type: "submit",
+                    className: "text-primary hover:text-primary/80 flex items-center justify-center p-1"
                   },
                   React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "send")
                 )
@@ -1169,10 +1065,14 @@
                 "AI sẽ chủ động hỏi đánh giá hài lòng, bạn chỉ cần trả lời trong khung chat (ví dụ: 5 sao)."
               ),
               React.createElement(
-                "div",
+                "form",
                 {
                   className:
-                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all",
+                  onSubmit: (e) => {
+                    e.preventDefault();
+                    handleSendTicketMessage();
+                  }
                 },
                 React.createElement("input", {
                   className:
@@ -1181,76 +1081,18 @@
                   type: "text",
                   value: ticketInput,
                   disabled: !isPhoneVerified,
-                  onChange: (e) => setTicketInput(e.target.value),
-                  onKeyDown: (e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleSendTicketMessage();
-                    }
-                  }
+                  onChange: (e) => setTicketInput(e.target.value)
                 }),
                 React.createElement(
                   "button",
                   {
+                    type: "submit",
                     className: "text-primary hover:text-primary/80 flex items-center justify-center p-1 disabled:opacity-50",
-                    onClick: handleSendTicketMessage,
-                    disabled: !isPhoneVerified || isUploadingTicketAttachments
+                    disabled: !isPhoneVerified
                   },
                   React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "send")
                 )
               ),
-              React.createElement(
-                "div",
-                { className: "mt-2" },
-                React.createElement("input", {
-                  type: "file",
-                  accept: "image/*,video/mp4",
-                  multiple: true,
-                  disabled: !isPhoneVerified || isUploadingTicketAttachments,
-                  onChange: handleTicketAttachmentChange,
-                  className:
-                    "w-full text-xs file:mr-3 file:py-1.5 file:px-2.5 file:rounded-full file:border-0 file:bg-primary file:text-white file:font-semibold file:text-xs disabled:opacity-60",
-                })
-              ),
-              ticketAttachments.length > 0 &&
-                React.createElement(
-                  "div",
-                  { className: "space-y-2" },
-                  ticketAttachments.map((a) =>
-                    React.createElement(
-                      "div",
-                      { key: a.id, className: "flex items-start justify-between gap-3 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2" },
-                      React.createElement(
-                        "div",
-                        { className: "min-w-0" },
-                        React.createElement("p", { className: "text-[11px] font-semibold text-slate-700 dark:text-slate-200 truncate" }, a.name || "file"),
-                        React.createElement(
-                          "p",
-                          { className: `text-[11px] mt-0.5 ${a.status === "error" ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400"}` },
-                          a.status === "ready"
-                            ? `Chờ upload (${Math.round((a.size || 0) / 1024)}KB)`
-                            : a.status === "uploading"
-                              ? "Đang upload..."
-                              : a.status === "uploaded"
-                                ? "Đã upload"
-                                : a.error || "Lỗi"
-                        ),
-                        a.status === "uploaded" && a.url && a.mimeType && a.mimeType.startsWith("image/")
-                          ? React.createElement("img", { src: a.url, alt: a.name, className: "mt-2 w-16 h-16 object-cover rounded border border-slate-200 dark:border-slate-700" })
-                          : null,
-                        a.status === "uploaded" && a.url && a.mimeType === "video/mp4"
-                          ? React.createElement(
-                              "a",
-                              { href: a.url, target: "_blank", className: "mt-2 inline-block text-[11px] text-primary underline" },
-                              "Mở video"
-                            )
-                          : null
-                      ),
-                      null
-                    )
-                  )
-                )
-              ,
               React.createElement(
                 "div",
                 { className: "flex gap-2" },

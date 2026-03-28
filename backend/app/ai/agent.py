@@ -1,5 +1,6 @@
 import os
 import re
+import logging
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
@@ -7,6 +8,8 @@ from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from .. import crud
 from . import rag
+
+logger = logging.getLogger(__name__)
 
 # Khởi tạo model Gemini
 llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite-preview", temperature=0.2)
@@ -519,10 +522,10 @@ def get_chat_response(message: str, chat_history: list = None) -> str:
                 response = str(raw_content)  # Fallback
         else:
             response = str(raw_content)  # Fallback cho string hoặc dict khác
-        print(f"AI Response: {response}")  # Debug: In phản hồi để kiểm tra
+        logger.debug("AI response generated successfully")
         return response
     except Exception as e:
-        print(f"AI Error: {e}")  # Debug: In lỗi
+        logger.exception("AI chat response failed: %s", e)
         return f"Xin lỗi, tôi gặp lỗi kỹ thuật: {str(e)}. Vui lòng thử lại sau."
 
 
