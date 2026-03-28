@@ -62,12 +62,20 @@ class OrderCreate(BaseModel):
     customer_phone: str
     customer_address: Optional[str] = None
 
+class OrderCustomerSummary(BaseModel):
+    full_name: str
+    phone_number: str
+    address: Optional[str] = None
+    cccd: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
 class OrderResponse(OrderBase):
     id: int
     customer_id: int
     total_amount: float
     created_at: datetime
     items: List[OrderItemResponse]
+    customer: Optional[OrderCustomerSummary] = None
     model_config = ConfigDict(from_attributes=True)
 
 # ----------------- Customer -----------------

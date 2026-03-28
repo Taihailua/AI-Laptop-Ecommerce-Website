@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Admin - Quản lý sản phẩm</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script>
         tailwind.config = {
@@ -13,7 +13,7 @@
             theme: {
                 extend: {
                     colors: { "primary": "#2b6cee", "background-light": "#f6f6f8", "background-dark": "#101622" },
-                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    fontFamily: { "display": ["Plus Jakarta Sans", "ui-sans-serif", "system-ui"] },
                 },
             },
         }
@@ -116,11 +116,12 @@
                 
                 <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800">
                     <p class="text-sm font-bold mb-2">Cấu hình chi tiết (Optional)</p>
-                    <div class="grid grid-cols-1 gap-2">
-                        <input name="cpu" placeholder="CPU (e.g. Core i5)" class="w-full bg-transparent border-b border-slate-300 dark:border-slate-700 py-1 text-sm outline-none">
-                        <input name="ram" placeholder="RAM (e.g. 8GB)" class="w-full bg-transparent border-b border-slate-300 dark:border-slate-700 py-1 text-sm outline-none">
-                        <input name="storage" placeholder="Ổ cứng (e.g. 512GB SSD)" class="w-full bg-transparent border-b border-slate-300 dark:border-slate-700 py-1 text-sm outline-none">
-                    </div>
+                    <textarea
+                        name="specs_text"
+                        rows="5"
+                        placeholder="Nhập mỗi dòng theo dạng: Tên thông số: Giá trị&#10;Ví dụ:&#10;CPU: Intel Core i5-1240P&#10;RAM: 16GB&#10;Ổ cứng: 512GB SSD"
+                        class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                    ></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 mt-4">
@@ -210,6 +211,35 @@
         const form = document.getElementById('add-form');
         const modalTitle = document.getElementById('modal-title');
 
+        function specsObjectToText(specs) {
+            if (!specs || typeof specs !== 'object') return '';
+            return Object.entries(specs)
+                .filter(([k, v]) => String(k || '').trim() && String(v || '').trim())
+                .map(([k, v]) => `${k}: ${v}`)
+                .join('\n');
+        }
+
+        function parseSpecsTextToObject(text) {
+            const specs = {};
+            const rawLines = String(text || '').split(/\r?\n/);
+
+            for (const line of rawLines) {
+                const cleanedLine = line.trim();
+                if (!cleanedLine) continue;
+
+                const separatorIndex = cleanedLine.indexOf(':');
+                if (separatorIndex === -1) continue;
+
+                const key = cleanedLine.slice(0, separatorIndex).trim();
+                const value = cleanedLine.slice(separatorIndex + 1).trim();
+                if (key && value) {
+                    specs[key] = value;
+                }
+            }
+
+            return Object.keys(specs).length ? specs : null;
+        }
+
         window.openModal = function(productId = null) {
             modal.classList.remove('hidden');
             document.getElementById('file-name').textContent = '';
@@ -231,11 +261,7 @@
                 form.elements['image_url'].value = product.image_url || '';
                 
                 // Specs
-                if (product.specs) {
-                    form.elements['cpu'].value = product.specs.cpu || '';
-                    form.elements['ram'].value = product.specs.ram || '';
-                    form.elements['storage'].value = product.specs.storage || '';
-                }
+                form.elements['specs_text'].value = specsObjectToText(product.specs);
 
             } else {
                 // Add Mode
@@ -261,21 +287,13 @@
             const id = formData.get('id');
 
             // Handle specs
-            const specs = {
-                cpu: formData.get('cpu'),
-                ram: formData.get('ram'),
-                storage: formData.get('storage')
-            };
-            
-            // Remove empty specs keys if needed, or keep them as empty strings?
-            // Backend handles empty strings gracefully usually.
-            // Add specs as JSON string
-            formData.set('specs', JSON.stringify(specs));
-            
-            // Remove individual spec fields from formData so they don't get sent as extra fields (though FastAPI might ignore them)
-            formData.delete('cpu');
-            formData.delete('ram');
-            formData.delete('storage');
+            const parsedSpecs = parseSpecsTextToObject(formData.get('specs_text'));
+            if (parsedSpecs) {
+                formData.set('specs', JSON.stringify(parsedSpecs));
+            } else {
+                formData.delete('specs');
+            }
+            formData.delete('specs_text');
 
             try {
                 if (id) {

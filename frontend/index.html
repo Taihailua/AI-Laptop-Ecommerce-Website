@@ -6,7 +6,7 @@
 <title>TechBook Store - Laptops with AI Assistant</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -18,7 +18,7 @@
                         "background-dark": "#101622",
                     },
                     fontFamily: {
-                        "display": ["Space Grotesk"]
+                      "display": ["Plus Jakarta Sans", "ui-sans-serif", "system-ui"]
                     },
                     borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
                 },
@@ -50,15 +50,11 @@
 <div class="flex flex-1 justify-end gap-8">
 <div class="flex items-center gap-9">
 <a class="text-primary font-bold leading-normal border-b-2 border-primary pb-1" href="#">Laptops</a>
-<a class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Accessories</a>
-<a class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Support</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Tra Cứu Đơn</a>
 </div>
 <div class="flex gap-4">
 <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-</button>
-<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-<span class="material-symbols-outlined text-[20px]">person</span>
 </button>
 <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdQ89XGHZmD-RaAISq-BND-OmD_c123Dn-8_H4EaPWhDtpCXY7n3jFQEF4Qn61w_DPh0HeCt8jFPxN4TplzAB7LXzR1r9v9_fBGooFPhanpCnOESGuvtHmFvkaRlbOG4RYCjuxAmCDf0tFz9_VCaw2RLmbuKGNnRNWZPViV84jlERZG6mkAygGbP6_PInIhhpqwFmhqEjZJ9zBTJm4FHicpWlLmUIdWEnWwI5kMkgEXhLq9Lu4B7uhcQePtfH_eN5NrCA4VY1-l882");'></div>
 </div>
@@ -208,11 +204,14 @@
 <input id="chat-input" class="flex-1 bg-transparent border-none text-sm text-slate-900 dark:text-white focus:ring-0 p-0 placeholder:text-slate-500" placeholder="Hỏi về cấu hình, giá cả..." type="text"/>
 <button id="chat-send" class="text-primary hover:text-primary/80 flex items-center justify-center p-1"><span class="material-symbols-outlined text-[20px]">send</span></button>
 </div>
+<div class="mt-2 flex justify-end">
+<button id="chat-checkout-trigger" class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">Chốt đơn trong chat</button>
+</div>
 </div>
 </div>
 
 <script type="module">
-  import { fetchProducts, Cart, sendChatMessage } from './api.js';
+  import { fetchProducts, Cart, sendChatMessage, checkout } from './api.js';
 
   const SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
   const cartCountEl = document.querySelector('[data-cart-count]');
@@ -311,7 +310,7 @@
   // ── Navigation links ─────────────────────────────────────────────
   document.querySelectorAll('a[href="#"]').forEach(a => {
     const text = a.textContent.trim();
-    if (text === 'Accessories' || text === 'Support') a.href = 'track-order.html';
+    if (text === 'Accessories' || text === 'Tra Cứu Đơn') a.href = 'track-order.html';
   });
 
   // ── Cart icon badge ───────────────────────────────────────────────
@@ -324,8 +323,50 @@
   const chatMessages = document.getElementById('chat-messages');
   const chatInput = document.getElementById('chat-input');
   const chatSend = document.getElementById('chat-send');
+  const chatCheckoutTrigger = document.getElementById('chat-checkout-trigger');
   const chatMinimize = document.getElementById('chat-minimize');
   const chatWidget = document.getElementById('chat-widget');
+  const ORDER_INTENT_REGEX = /(ch[oố]t\s*đ[ơo]n|chot\s*don|đặt\s*hàng|dat\s*hang|mua\s*ngay|mua\s*luon|thanh\s*toán|checkout)/i;
+  const CHECKOUT_INFO_REQUEST_REGEX = /(họ\s*và\s*tên|số\s*điện\s*thoại|địa\s*chỉ\s*(nhận\s*hàng|giao\s*hàng)|số\s*cccd|cung\s*cấp\s*(cho\s*mình\s*)?thông\s*tin|tạo\s*đơn\s*hàng|chốt\s*đơn)/i;
+  let hasOpenChatOrderForm = false;
+
+  function escapeHtml(text = '') {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function formatAiText(text = '') {
+    // Hiển thị xuống dòng và giữ an toàn HTML cơ bản.
+    return escapeHtml(text).replace(/\n/g, '<br>');
+  }
+
+  function renderRecommendedProducts(products = []) {
+    if (!Array.isArray(products) || !products.length) return '';
+
+    const cards = products.map((p) => `
+      <a href="product-detail.html?id=${p.id}" class="block rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50 dark:bg-slate-900 hover:border-primary/70 transition-colors">
+        <div class="h-24 bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+          ${p.image_url
+            ? `<img src="${p.image_url}" alt="${escapeHtml(p.name || 'Laptop')}" class="w-full h-full object-cover"/>`
+            : '<span class="material-symbols-outlined text-slate-500">laptop_mac</span>'}
+        </div>
+        <div class="p-2">
+          <p class="text-xs font-semibold text-slate-900 dark:text-white line-clamp-2">${escapeHtml(p.name || 'Sản phẩm')}</p>
+          <p class="text-xs text-primary font-bold mt-1">${formatPrice(Number(p.price || 0))}</p>
+        </div>
+      </a>
+    `).join('');
+
+    return `
+      <div class="mt-2 grid grid-cols-2 gap-2">
+        ${cards}
+      </div>
+    `;
+  }
 
   function appendMessage(role, text) {
     const isUser = role === 'user';
@@ -335,10 +376,110 @@
       ? `<div class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg rounded-tr-none px-3 py-2 max-w-[80%] break-words">${text}</div>`
       : `<div class="flex gap-2 max-w-[90%]">
            <div class="bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-[18px]">smart_toy</span></div>
-           <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm break-words">${text}</div>
+           <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm break-words ai-message-content">${text}</div>
          </div>`;
     chatMessages.appendChild(bubble);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function openChatCheckoutForm({ notifyWhenOpen = true } = {}) {
+    if (hasOpenChatOrderForm) {
+      if (notifyWhenOpen) {
+        appendMessage('ai', 'Form chốt đơn đang mở. Bạn điền thông tin rồi bấm "Xác nhận đặt hàng" nhé.');
+      }
+      return false;
+    }
+
+    hasOpenChatOrderForm = true;
+    const cartItems = Cart.getAll();
+    const formWrap = document.createElement('div');
+    formWrap.className = 'flex justify-start';
+    formWrap.innerHTML = `
+      <div class="flex gap-2 max-w-[95%]">
+        <div class="bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-[18px]">smart_toy</span></div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-3 shadow-sm w-full">
+          <p class="font-semibold text-slate-900 dark:text-white mb-2">Chốt đơn nhanh trong chat</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Giỏ hiện có <strong>${cartItems.length}</strong> sản phẩm.</p>
+          <form class="chat-order-form space-y-2">
+            <input name="customer_name" required class="w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm" placeholder="Họ và tên" />
+            <input name="customer_phone" required pattern="[0-9]{10,11}" class="w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm" placeholder="Số điện thoại" />
+            <input name="customer_address" class="w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm" placeholder="Địa chỉ giao hàng" />
+            <input name="customer_cccd" class="w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm" placeholder="CCCD (không bắt buộc)" />
+            <div class="flex gap-2 pt-1">
+              <button type="submit" class="flex-1 bg-primary hover:bg-primary/90 text-white rounded-lg py-2 text-sm font-semibold">Xác nhận đặt hàng</button>
+              <button type="button" class="go-checkout-page px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-xs">Trang checkout</button>
+            </div>
+          </form>
+        </div>
+      </div>`;
+
+    chatMessages.appendChild(formWrap);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    const form = formWrap.querySelector('.chat-order-form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const goCheckoutBtn = form.querySelector('.go-checkout-page');
+
+    goCheckoutBtn.addEventListener('click', () => {
+      window.location.href = 'checkout.html';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const items = Cart.getAll();
+
+      if (!items.length) {
+        appendMessage('ai', 'Giỏ hàng đang trống. Bạn thêm sản phẩm trước rồi chốt đơn nhé.');
+        showToast('Giỏ hàng trống, chưa thể tạo đơn.', 'error');
+        return;
+      }
+
+      const payload = {
+        customer_name: form.customer_name.value.trim(),
+        customer_phone: form.customer_phone.value.trim(),
+        customer_address: form.customer_address.value.trim() || null,
+        customer_cccd: form.customer_cccd.value.trim() || null,
+        items: items.map(i => ({ product_id: i.product_id, quantity: i.quantity }))
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đang tạo đơn...';
+
+      try {
+        const created = await checkout(payload);
+        Cart.clear();
+        updateCartBadge();
+        appendMessage('ai', `Đã tạo đơn thành công #${created.id}. Nhân viên sẽ liên hệ qua SĐT ${payload.customer_phone}.`);
+        showToast(`Đặt hàng thành công! Mã đơn #${created.id}`, 'success');
+        formWrap.remove();
+        hasOpenChatOrderForm = false;
+      } catch (err) {
+        appendMessage('ai', `Không thể tạo đơn lúc này: ${err.message}`);
+        showToast('Tạo đơn thất bại, vui lòng kiểm tra lại thông tin.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Xác nhận đặt hàng';
+      }
+    });
+
+    return true;
+  }
+
+  function shouldConvertToCheckoutForm(aiResponseText) {
+    if (!aiResponseText) return false;
+    const plainText = aiResponseText
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+
+    if (!CHECKOUT_INFO_REQUEST_REGEX.test(plainText)) return false;
+
+    const requiredSignals = ['họ và tên', 'số điện thoại'];
+    const optionalSignals = ['địa chỉ', 'cccd', 'tạo đơn'];
+    const requiredCount = requiredSignals.filter(k => plainText.includes(k)).length;
+    const optionalCount = optionalSignals.filter(k => plainText.includes(k)).length;
+
+    return requiredCount >= 2 && optionalCount >= 1;
   }
 
   async function sendMessage() {
@@ -347,17 +488,38 @@
     chatInput.value = '';
     appendMessage('user', msg);
     appendMessage('ai', '<em>Đang suy nghĩ...</em>');
+
+    let openedByUserIntent = false;
+    if (ORDER_INTENT_REGEX.test(msg)) {
+      openedByUserIntent = openChatCheckoutForm({ notifyWhenOpen: false });
+    }
+
     try {
       const data = await sendChatMessage(SESSION_ID, msg);
-      chatMessages.lastElementChild.querySelector('div:last-child').innerHTML = data.response;
+      const lastAiBubble = chatMessages.lastElementChild?.querySelector('.ai-message-content');
+      if (!lastAiBubble) return;
+
+      if (shouldConvertToCheckoutForm(data.response)) {
+        lastAiBubble.innerHTML = 'Mình đã mở form chốt đơn nhanh ngay bên dưới, bạn chỉ cần điền thông tin là xong.';
+        if (!openedByUserIntent) {
+          openChatCheckoutForm({ notifyWhenOpen: false });
+        }
+      } else {
+        lastAiBubble.innerHTML = `${formatAiText(data.response)}${renderRecommendedProducts(data.recommended_products)}`;
+      }
     } catch (e) {
-      chatMessages.lastElementChild.querySelector('div:last-child').innerHTML = '❌ Lỗi kết nối AI. Hãy kiểm tra backend.';
+      const lastAiBubble = chatMessages.lastElementChild?.querySelector('.ai-message-content');
+      if (lastAiBubble) {
+        lastAiBubble.innerHTML = '❌ Lỗi kết nối AI. Hãy kiểm tra backend.';
+      }
     }
+
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
   chatSend.addEventListener('click', sendMessage);
   chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  chatCheckoutTrigger.addEventListener('click', openChatCheckoutForm);
 
   let minimized = false;
   chatMinimize.addEventListener('click', () => {

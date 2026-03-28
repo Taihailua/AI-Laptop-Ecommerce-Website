@@ -5,11 +5,16 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Admin Login - TechShop</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <script>
         tailwind.config = {
             darkMode: "class",
-            theme: { extend: { colors: { "primary": "#2b6cee", "background-dark": "#101622" } } }
+            theme: {
+                extend: {
+                    colors: { "primary": "#2b6cee", "background-dark": "#101622" },
+                    fontFamily: { "display": ["Plus Jakarta Sans", "ui-sans-serif", "system-ui"] },
+                }
+            }
         }
     </script>
 </head>
