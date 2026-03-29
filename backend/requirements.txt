@@ -6,7 +6,13 @@ pydantic
 pydantic-settings
 google-generativeai
 langchain
+langchain-community
+langchain-huggingface
 langchain-google-genai
+langchain-chroma
+langgraph
+chromadb
+sentence-transformers
 python-dotenv
 python-jose[cryptography]
 passlib[bcrypt]

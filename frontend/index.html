@@ -327,7 +327,10 @@
   const chatMinimize = document.getElementById('chat-minimize');
   const chatWidget = document.getElementById('chat-widget');
   const ORDER_INTENT_REGEX = /(ch[oố]t\s*đ[ơo]n|chot\s*don|đặt\s*hàng|dat\s*hang|mua\s*ngay|mua\s*luon|thanh\s*toán|checkout)/i;
+  const SELECT_PRODUCT_INTENT_REGEX = /(ch[oọ]n|l[aấ]y|đặt|mua|thêm\s*(?:v[aà]|lu[oô]n)?|chốt)(?:\s+th[uứ]\s+)?(?:m[aá]y|laptop|s[aả]n\s*ph[aẩ]m)?/i;
+  const PRODUCT_ID_REGEX = /(?:\bID\s*[:#-]?\s*|\bm[aã]\s*(?:s[aả]n\s*ph[aẩ]m)?\s*[:#-]?\s*|#)(\d+)\b/gi;
   const CHECKOUT_INFO_REQUEST_REGEX = /(họ\s*và\s*tên|số\s*điện\s*thoại|địa\s*chỉ\s*(nhận\s*hàng|giao\s*hàng)|số\s*cccd|cung\s*cấp\s*(cho\s*mình\s*)?thông\s*tin|tạo\s*đơn\s*hàng|chốt\s*đơn)/i;
+  const rememberedRecommendedProducts = new Map();
   let hasOpenChatOrderForm = false;
 
   function escapeHtml(text = '') {
@@ -366,6 +369,72 @@
         ${cards}
       </div>
     `;
+  }
+
+  function rememberRecommendedProducts(products = []) {
+    if (!Array.isArray(products)) return;
+    for (const p of products) {
+      if (!p || typeof p.id !== 'number') continue;
+      rememberedRecommendedProducts.set(p.id, p);
+    }
+  }
+
+  function extractSelectedProductIds(text = '') {
+    const ids = [];
+    PRODUCT_ID_REGEX.lastIndex = 0;
+    let match;
+
+    while ((match = PRODUCT_ID_REGEX.exec(text)) !== null) {
+      const id = Number(match[1]);
+      if (!Number.isNaN(id) && !ids.includes(id)) {
+        ids.push(id);
+      }
+    }
+    return ids;
+  }
+
+  function getSelectedProductsFromMessage(message = '', latestRecommended = []) {
+    if (!SELECT_PRODUCT_INTENT_REGEX.test(message)) return [];
+
+    const pickedIds = extractSelectedProductIds(message);
+    if (pickedIds.length) {
+      return pickedIds
+        .map((id) => rememberedRecommendedProducts.get(id))
+        .filter(Boolean);
+    }
+
+    if (Array.isArray(latestRecommended) && latestRecommended.length === 1) {
+      return [latestRecommended[0]];
+    }
+
+    return [];
+  }
+
+  function autoAddSelectedProductsFromChat(userMessage = '', latestRecommended = []) {
+    const selectedProducts = getSelectedProductsFromMessage(userMessage, latestRecommended);
+    if (!selectedProducts.length) {
+      return { added: [], alreadyInCart: [] };
+    }
+
+    const cartItems = Cart.getAll();
+    const added = [];
+    const alreadyInCart = [];
+
+    for (const product of selectedProducts) {
+      const existed = cartItems.some(item => item.product_id === product.id);
+      if (existed) {
+        alreadyInCart.push(product);
+        continue;
+      }
+      Cart.add(product, 1);
+      added.push(product);
+    }
+
+    if (added.length) {
+      updateCartBadge();
+    }
+
+    return { added, alreadyInCart };
   }
 
   function appendMessage(role, text) {
@@ -498,6 +567,9 @@
       const data = await sendChatMessage(SESSION_ID, msg);
       const lastAiBubble = chatMessages.lastElementChild?.querySelector('.ai-message-content');
       if (!lastAiBubble) return;
+      rememberRecommendedProducts(data.recommended_products || []);
+
+      const autoAddResult = autoAddSelectedProductsFromChat(msg, data.recommended_products || []);
 
       if (shouldConvertToCheckoutForm(data.response)) {
         lastAiBubble.innerHTML = 'Mình đã mở form chốt đơn nhanh ngay bên dưới, bạn chỉ cần điền thông tin là xong.';
@@ -506,6 +578,16 @@
         }
       } else {
         lastAiBubble.innerHTML = `${formatAiText(data.response)}${renderRecommendedProducts(data.recommended_products)}`;
+      }
+
+      if (autoAddResult.added.length) {
+        const names = autoAddResult.added.map(p => p.name).join(', ');
+        appendMessage('ai', `Mình đã tự thêm vào giỏ: ${escapeHtml(names)}. Bạn có thể chốt đơn ngay bên dưới.`);
+        showToast(`Đã thêm ${autoAddResult.added.length} sản phẩm từ chat vào giỏ`, 'success');
+        openChatCheckoutForm({ notifyWhenOpen: false });
+      } else if (autoAddResult.alreadyInCart.length && ORDER_INTENT_REGEX.test(msg)) {
+        appendMessage('ai', 'Sản phẩm bạn chọn đã có trong giỏ. Mình mở form để bạn chốt đơn luôn nhé.');
+        openChatCheckoutForm({ notifyWhenOpen: false });
       }
     } catch (e) {
       const lastAiBubble = chatMessages.lastElementChild?.querySelector('.ai-message-content');
