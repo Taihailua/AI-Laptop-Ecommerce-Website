@@ -1,375 +1,1152 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>TechBook Store - Laptops with AI Assistant</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#2b6cee",
-                        "background-light": "#f6f6f8",
-                        "background-dark": "#101622",
-                    },
-                    fontFamily: {
-                        "display": ["Space Grotesk"]
-                    },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-                },
-            },
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechBook Store - Laptops with AI Assistant</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#2b6cee",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101622"
+          },
+          fontFamily: {
+            display: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui"]
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          }
         }
-    </script>
+      }
+    };
+  </script>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen relative">
-<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
-<div class="layout-container flex h-full grow flex-col">
-<div class="px-40 flex flex-1 justify-center py-5">
-<div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
-<!-- Top Navigation Bar -->
-<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-10 py-4 mb-6 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur">
-<div class="flex items-center gap-8">
-<div class="flex items-center gap-4 text-primary">
-<span class="material-symbols-outlined text-3xl">laptop_mac</span>
-<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">TechBook Store</h2>
-</div>
-<label class="flex flex-col min-w-40 !h-10 max-w-64">
-<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100 dark:bg-slate-800">
-<div class="text-slate-500 dark:text-slate-400 flex items-center justify-center pl-4 rounded-l-lg">
-<span class="material-symbols-outlined text-[24px]">search</span>
-</div>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search laptops..." value=""/>
-</div>
-</label>
-</div>
-<div class="flex flex-1 justify-end gap-8">
-<div class="flex items-center gap-9">
-<a class="text-primary font-bold leading-normal border-b-2 border-primary pb-1" href="#">Laptops</a>
-<a class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Accessories</a>
-<a class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Support</a>
-</div>
-<div class="flex gap-4">
-<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-</button>
-<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-<span class="material-symbols-outlined text-[20px]">person</span>
-</button>
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdQ89XGHZmD-RaAISq-BND-OmD_c123Dn-8_H4EaPWhDtpCXY7n3jFQEF4Qn61w_DPh0HeCt8jFPxN4TplzAB7LXzR1r9v9_fBGooFPhanpCnOESGuvtHmFvkaRlbOG4RYCjuxAmCDf0tFz9_VCaw2RLmbuKGNnRNWZPViV84jlERZG6mkAygGbP6_PInIhhpqwFmhqEjZJ9zBTJm4FHicpWlLmUIdWEnWwI5kMkgEXhLq9Lu4B7uhcQePtfH_eN5NrCA4VY1-l882");'></div>
-</div>
-</div>
-</header>
-<!-- Hero Section -->
-<div class="@container mb-10">
-<div class="@[480px]:p-4">
-<div class="flex min-h-[400px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-center justify-center p-8 relative overflow-hidden" data-alt="Modern workspace with high-end laptop" style='background-image: linear-gradient(rgba(16, 22, 34, 0.7), rgba(16, 22, 34, 0.9)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuACr5n4Qn9AUENiT6iOzbMsCOZevLri3TpUhe3Guu1q5PzLpXGG3oFX6w_dm_Xpyu0sPQ4tQB1zBpFQLtsxfUC1pmoNi9rQmUJPL27BWzIEiTGB0wFOyhPKkDKt58xcMkIbqN46FcNVBzPidLm1aY0-kIDuQ1yF1W3G6HbCI-fRIXfaUW4YrooFJsbrswEUW1HFlRiHd7r5UhfDhiNJgoxxKGwY4oFBb_oE5jP-nNcIPPGrOnHZnXHcX5hxqMrNXY_-NXgPctXJIzyz");'>
-<div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent"></div>
-<div class="flex flex-col gap-4 text-center relative z-10 max-w-2xl">
-<h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl">
-                                        Discover Premium Laptops
-                                    </h1>
-<h2 class="text-slate-200 text-lg font-normal leading-relaxed @[480px]:text-xl">
-                                        Powered by AI to find your perfect match. Experience unparalleled performance and sleek design.
-                                    </h2>
-<div class="mt-4">
-<button class="flex inline-flex cursor-pointer items-center justify-center rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-[0_0_15px_rgba(43,108,238,0.5)]">
-                                            Shop Now
-                                        </button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Products Grid -->
-<div class="flex items-center justify-between px-4 pb-6">
-<h2 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em]">Featured Laptops</h2>
-<div class="flex gap-2">
-<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary">
-<span class="material-symbols-outlined">filter_list</span>
-</button>
-<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary">
-<span class="material-symbols-outlined">sort</span>
-</button>
-</div>
-</div>
-<div id="product-grid" class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-8 p-4 mb-24">
-<!-- Product Card 1 -->
-<div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
-<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg overflow-hidden relative" data-alt="Sleek silver laptop half open" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADjCwUr3uv2sju2Fftn4qlZDkeQbf5H_dGHVTSsAIKxkF_2Baifc_XxU_G0FY2swYLwYfmM6DEB53zK682w8_d2R7Wola31oOJXcE0gwA3BiXPHfiAA4yXEY1JQZj7tHhyY0e639SjD2GlzbdXBQs4Hf4hZo2MfGX0yr4I_4S-O7YohCJBswAuMec5LLJOs0m-I9X3NTkZ-JQ2EaY-0vLu9i0gQkoUw6oIEU2FAByIRQ-pikTkaP2LHauaRSJCEAS-n8Fyn21MGZT6");'>
-<div class="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded">NEW</div>
-</div>
-<div class="flex flex-col flex-1">
-<div class="flex justify-between items-start mb-2">
-<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">ProBook X15</h3>
-<span class="text-primary font-bold text-lg">$1,499</span>
-</div>
-<div class="flex flex-col gap-1 mb-4">
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">memory</span> M3 Chip
-                                    </p>
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">memory_alt</span> 16GB RAM
-                                    </p>
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">hard_drive</span> 512GB SSD
-                                    </p>
-</div>
-<button class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2">
-<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-                                    Add to Cart
-                                </button>
-</div>
-</div>
-<!-- Product Card 2 -->
-<div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
-<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg overflow-hidden relative" data-alt="Dark gaming laptop with glowing keyboard" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAdJFWgul1IguwceBRhxeXwZEX0IK0pqDpXoGsV-hRr0FdWYpGe0mWBbODOV-eUWXHiNZXGcYj3P4E4Z4IH47OoBAAqtGPowDewbMWsIzPrZBsQBXwjF-xQ_vzhdGjjUjrlO5QQfjbxeW1EiaKDFI5dLdrHFq6dALCWpb8p8fnhBgCFPcBaMsblFPnPSc1F7YbEwKrqJkgokuegDhfwO0UK5yME2e-4leI-qpF35CtcrvqpMSEQfbIDu3rO3ACFrrXgqM1XfHjUfAuE");'>
-<div class="absolute top-2 right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded">BEST SELLER</div>
-</div>
-<div class="flex flex-col flex-1">
-<div class="flex justify-between items-start mb-2">
-<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Zenith Stealth 14</h3>
-<span class="text-primary font-bold text-lg">$1,899</span>
-</div>
-<div class="flex flex-col gap-1 mb-4">
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">memory</span> Core i9
-                                    </p>
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">memory_alt</span> 32GB RAM
-                                    </p>
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">hard_drive</span> 1TB SSD
-                                    </p>
-</div>
-<button class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2">
-<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-                                    Add to Cart
-                                </button>
-</div>
-</div>
-<!-- Product Card 3 -->
-<div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
-<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg overflow-hidden relative" data-alt="High performance gaming laptop on desk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAP5I-bkCYxflgRApIBZZ-IJ86KBlQQ3eAE4E0XGfnaPXuTylm3tefV_oTvx0FiJGylSOee9z_d06KePZ1v9XDmp0TU4f8_IgX-YfPMcG99IH8HF41HmnA2ldX52r-XPtII3EhYGKKLka0962kCkbtGDz9VDzSXVitAw_1Lg3BV-6DF7EyDXqSTVegKcHpu_S8jqK68TiEiRnmJjWGQ_JLjA6cSIvoYEn4yUSa5HHs3OxDSzUjdIgNYOmufpE7zXbS2O96epxNCrXOx");'></div>
-<div class="flex flex-col flex-1">
-<div class="flex justify-between items-start mb-2">
-<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Titan Gamer Pro</h3>
-<span class="text-primary font-bold text-lg">$2,299</span>
-</div>
-<div class="flex flex-col gap-1 mb-4">
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">videocam</span> RTX 4080
-                                    </p>
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">memory_alt</span> 64GB RAM
-                                    </p>
-<p class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">hard_drive</span> 2TB SSD
-                                    </p>
-</div>
-<button class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2">
-<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-                                    Add to Cart
-                                </button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- AI Assistant Chat Widget -->
-<div id="chat-widget" class="fixed bottom-6 right-6 w-[min(20rem,calc(100vw-1.5rem))] flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden z-40 max-h-[calc(100vh-7rem)]">
-<!-- Chat Header -->
-<div class="bg-primary px-4 py-3 flex justify-between items-center text-white cursor-pointer" id="chat-toggle-header">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined">smart_toy</span>
-<h4 class="font-bold text-sm">TechAI Assistant</h4>
-</div>
-<div class="flex items-center gap-2">
-<button id="chat-minimize" class="hover:text-white/80 transition-colors"><span class="material-symbols-outlined text-[18px]">minimize</span></button>
-</div>
-</div>
-<!-- Chat Messages -->
-<div id="chat-messages" class="p-4 flex flex-col gap-4 h-64 overflow-y-auto bg-slate-50 dark:bg-slate-800/50">
-<div class="flex justify-start">
-<div class="flex gap-2 max-w-[90%]">
-<div class="bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-[18px]">smart_toy</span></div>
-<div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm">Xin chào! Tôi có thể giúp bạn tìm laptop phù hợp. Bạn cần dùng để làm gì? 💻</div>
-</div>
-</div>
-</div>
-<!-- Chat Input -->
-<div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-<div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
-<input id="chat-input" class="flex-1 bg-transparent border-none text-sm text-slate-900 dark:text-white focus:ring-0 p-0 placeholder:text-slate-500" placeholder="Hỏi về cấu hình, giá cả..." type="text"/>
-<button id="chat-send" class="text-primary hover:text-primary/80 flex items-center justify-center p-1"><span class="material-symbols-outlined text-[20px]">send</span></button>
-</div>
-</div>
-</div>
+  <div id="root"></div>
 
-<script type="module">
-  import { fetchProducts, Cart, sendChatMessage } from './api.js';
+  <script type="module">
+    import React, { useEffect, useMemo, useRef, useState } from "https://esm.sh/react@18.3.1";
+    import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
+    import {
+      fetchProducts,
+      Cart,
+      sendAssistantMessage,
+      sendChatMessage,
+      checkout,
+      trackOrderByPhone,
+      fetchTicketDetail,
+      fetchTicketsByPhone
+    } from "./api.js";
 
-  const SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
-  const cartCountEl = document.querySelector('[data-cart-count]');
+    const ORDER_INTENT_REGEX = /(ch[oố]t\s*đ[ơo]n|chot\s*don|đặt\s*hàng|dat\s*hang|mua\s*ngay|mua\s*luon|thanh\s*toán|checkout)/i;
+    const SELECT_PRODUCT_INTENT_REGEX = /(ch[oọ]n|l[aấ]y|đặt|mua|thêm\s*(?:v[aà]|lu[oô]n)?|chốt)(?:\s+th[uứ]\s+)?(?:m[aá]y|laptop|s[aả]n\s*ph[aẩ]m)?/i;
+    const PRODUCT_ID_REGEX = /(?:\bID\s*[:#-]?\s*|\bm[aã]\s*(?:s[aả]n\s*ph[aẩ]m)?\s*[:#-]?\s*|#)(\d+)\b/gi;
+    const CHECKOUT_INFO_REQUEST_REGEX = /(họ\s*và\s*tên|số\s*điện\s*thoại|địa\s*chỉ\s*(nhận\s*hàng|giao\s*hàng)|số\s*cccd|cung\s*cấp\s*(cho\s*mình\s*)?thông\s*tin|tạo\s*đơn\s*hàng|chốt\s*đơn)/i;
+    const TICKET_STATUS_LABELS = {
+      Moi: "Mới",
+      "Dang xu ly": "Đang xử lý",
+      "Da giai quyet": "Đã giải quyết",
+      "Da dong": "Đã đóng"
+    };
+    const TICKET_CATEGORY_LABELS = {
+      "Tu van san pham": "Tư vấn sản phẩm",
+      "Theo doi don hang": "Theo dõi đơn hàng",
+      "Doi tra hoan tien": "Đổi trả hoàn tiền",
+      "Van de thanh toan": "Vấn đề thanh toán",
+      "Ho tro ky thuat": "Hỗ trợ kỹ thuật",
+      "Khieu nai": "Khiếu nại",
+      Khac: "Khác"
+    };
 
-  // ── Update cart badge ────────────────────────────────────────────
-  function updateCartBadge() {
-    const total = Cart.getAll().reduce((s, i) => s + i.quantity, 0);
-    document.querySelectorAll('.cart-badge').forEach(el => el.textContent = total > 0 ? total : '');
-  }
-
-  // ── Render products ──────────────────────────────────────────────
-  function formatPrice(p) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
-  }
-
-  function renderProducts(products) {
-    const grid = document.getElementById('product-grid');
-    if (!grid) return;
-    if (!products.length) { grid.innerHTML = '<p class="text-slate-400 text-center col-span-full py-8">Không tìm thấy sản phẩm nào.</p>'; return; }
-    grid.innerHTML = products.map(p => `
-      <div class="flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group">
-        <div class="w-full aspect-video rounded-lg overflow-hidden bg-slate-800 flex items-center justify-center cursor-pointer" onclick="window.location.href='product-detail.html?id=${p.id}'">
-          ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover"/>` : `<span class="material-symbols-outlined text-5xl text-slate-600">laptop_mac</span>`}
-        </div>
-        <div class="flex flex-col flex-1">
-          <div class="flex justify-between items-start mb-2">
-            <h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer" onclick="window.location.href='product-detail.html?id=${p.id}'">${p.name}</h3>
-            <span class="text-primary font-bold text-lg">${formatPrice(p.price)}</span>
-          </div>
-          <p class="text-slate-500 dark:text-slate-400 text-sm mb-1"><strong>Hãng:</strong> ${p.brand || 'N/A'}</p>
-          ${p.specs ? `<p class="text-slate-500 dark:text-slate-400 text-sm mb-3">${typeof p.specs === 'object' ? Object.entries(p.specs).map(([k,v])=>`${k}: ${v}`).join(' | ') : p.specs}</p>` : ''}
-          <p class="text-sm mb-3 ${p.stock_quantity > 0 ? 'text-green-400' : 'text-red-400'}">${p.stock_quantity > 0 ? `Còn ${p.stock_quantity} sản phẩm` : 'Hết hàng'}</p>
-          <button onclick='addToCart(${JSON.stringify(p)})' ${p.stock_quantity === 0 ? 'disabled' : ''} class="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2 disabled:opacity-40">
-            <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span> Thêm vào giỏ
-          </button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  window.addToCart = function(product) {
-    Cart.add(product);
-    updateCartBadge();
-    showToast(`Đã thêm "${product.name}" vào giỏ hàng!`, 'success');
-  };
-
-  // Toast Function
-  window.showToast = function(message, type = 'success') {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'toast-container';
-      container.className = 'fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
-      document.body.appendChild(container);
+    function escapeHtml(text = "") {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
-    
-    const toast = document.createElement('div');
-    toast.className = `pointer-events-auto px-4 py-3 rounded-lg shadow-lg text-white font-medium flex items-center gap-2 transform transition-all duration-300 translate-x-full ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
-    toast.innerHTML = `<span class="material-symbols-outlined text-xl">${type === 'success' ? 'check_circle' : 'error'}</span> <span>${message}</span>`;
-    container.appendChild(toast);
-    
-    // Animate in
-    requestAnimationFrame(() => {
-      toast.classList.remove('translate-x-full');
-    });
 
-    // Auto remove
-    setTimeout(() => {
-      toast.classList.add('translate-x-full', 'opacity-0');
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
-  }
-
-  async function loadProducts(search = '') {
-    const grid = document.getElementById('product-grid');
-    if (!grid) return;
-    grid.innerHTML = '<div class="col-span-full text-center py-10 text-slate-400">Đang tải sản phẩm...</div>';
-    try {
-      const products = await fetchProducts(search);
-      renderProducts(products);
-    } catch (e) {
-      grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-400">Lỗi tải sản phẩm: ${e.message}. Hãy đảm bảo backend đang chạy tại localhost:8000</div>`;
+    function formatPrice(price) {
+      return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(price || 0));
     }
-  }
 
-  // ── Search ───────────────────────────────────────────────────────
-  const searchInput = document.querySelector('input[placeholder="Search laptops..."]');
-  if (searchInput) {
-    let timer;
-    searchInput.addEventListener('input', () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => loadProducts(searchInput.value), 400);
-    });
-  }
-
-  // ── Navigation links ─────────────────────────────────────────────
-  document.querySelectorAll('a[href="#"]').forEach(a => {
-    const text = a.textContent.trim();
-    if (text === 'Accessories' || text === 'Support') a.href = 'track-order.html';
-  });
-
-  // ── Cart icon badge ───────────────────────────────────────────────
-  const cartBtn = document.querySelector('button:has(.material-symbols-outlined:nth-of-type(1))');
-  if (cartBtn) {
-    cartBtn.addEventListener('click', () => { window.location.href = 'checkout.html'; });
-  }
-
-  // ── AI Chat ──────────────────────────────────────────────────────
-  const chatMessages = document.getElementById('chat-messages');
-  const chatInput = document.getElementById('chat-input');
-  const chatSend = document.getElementById('chat-send');
-  const chatMinimize = document.getElementById('chat-minimize');
-  const chatWidget = document.getElementById('chat-widget');
-
-  function appendMessage(role, text) {
-    const isUser = role === 'user';
-    const bubble = document.createElement('div');
-    bubble.className = isUser ? 'flex justify-end' : 'flex justify-start';
-    bubble.innerHTML = isUser
-      ? `<div class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg rounded-tr-none px-3 py-2 max-w-[80%] break-words">${text}</div>`
-      : `<div class="flex gap-2 max-w-[90%]">
-           <div class="bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1"><span class="material-symbols-outlined text-[18px]">smart_toy</span></div>
-           <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm break-words">${text}</div>
-         </div>`;
-    chatMessages.appendChild(bubble);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  async function sendMessage() {
-    const msg = chatInput.value.trim();
-    if (!msg) return;
-    chatInput.value = '';
-    appendMessage('user', msg);
-    appendMessage('ai', '<em>Đang suy nghĩ...</em>');
-    try {
-      const data = await sendChatMessage(SESSION_ID, msg);
-      chatMessages.lastElementChild.querySelector('div:last-child').innerHTML = data.response;
-    } catch (e) {
-      chatMessages.lastElementChild.querySelector('div:last-child').innerHTML = '❌ Lỗi kết nối AI. Hãy kiểm tra backend.';
+    function formatAiText(text = "") {
+      return escapeHtml(text).replace(/\n/g, "<br>");
     }
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
 
-  chatSend.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+    function formatDateTime(value) {
+      if (!value) return "";
+      try {
+        return new Date(value).toLocaleString("vi-VN");
+      } catch {
+        return String(value);
+      }
+    }
 
-  let minimized = false;
-  chatMinimize.addEventListener('click', () => {
-    minimized = !minimized;
-    chatMessages.style.display = minimized ? 'none' : '';
-    document.querySelector('#chat-widget .p-3').style.display = minimized ? 'none' : '';
-  });
+    function formatTicketStatus(status) {
+      return TICKET_STATUS_LABELS[status] || status || "-";
+    }
 
-  // ── Init ─────────────────────────────────────────────────────────
-  loadProducts();
-  updateCartBadge();
-</script>
-</body></html>
+    function formatTicketCategory(category) {
+      return TICKET_CATEGORY_LABELS[category] || category || "-";
+    }
 
+    function formatSpecs(specs) {
+      if (!specs) return "";
+      if (typeof specs === "object") {
+        return Object.entries(specs).map(([k, v]) => `${k}: ${v}`).join(" | ");
+      }
+      return String(specs);
+    }
 
+    function renderRecommendedProductsHtml(products = []) {
+      if (!Array.isArray(products) || !products.length) return "";
+
+      const cards = products.map((p) => {
+        const imageNode = p.image_url
+          ? `<img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name || "Laptop")}" class="w-full h-full object-cover"/>`
+          : '<span class="material-symbols-outlined text-slate-500">laptop_mac</span>';
+
+        return `
+          <a href="product-detail.html?id=${Number(p.id)}" class="block rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50 dark:bg-slate-900 hover:border-primary/70 transition-colors">
+            <div class="h-24 bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">${imageNode}</div>
+            <div class="p-2">
+              <p class="text-xs font-semibold text-slate-900 dark:text-white line-clamp-2">${escapeHtml(p.name || "Sản phẩm")}</p>
+              <p class="text-xs text-primary font-bold mt-1">${formatPrice(p.price)}</p>
+            </div>
+          </a>
+        `;
+      }).join("");
+
+      return `<div class="mt-2 grid grid-cols-2 gap-2">${cards}</div>`;
+    }
+
+    function App() {
+      const sessionId = useMemo(() => `session_${Math.random().toString(36).slice(2)}`, []);
+      const searchTimerRef = useRef(null);
+      const chatMessagesRef = useRef(null);
+      const rememberedRecommendedProductsRef = useRef(new Map());
+
+      const [products, setProducts] = useState([]);
+      const [loadingProducts, setLoadingProducts] = useState(true);
+      const [productsError, setProductsError] = useState("");
+      const [search, setSearch] = useState("");
+      const [cartCount, setCartCount] = useState(0);
+      const [chatInput, setChatInput] = useState("");
+      const [isChatMinimized, setIsChatMinimized] = useState(false);
+      const [isTicketBoxMinimized, setIsTicketBoxMinimized] = useState(true);
+      const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+      const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+      const [orderForm, setOrderForm] = useState({
+        customer_name: "",
+        customer_phone: "",
+        customer_address: "",
+        customer_cccd: ""
+      });
+      const [toasts, setToasts] = useState([]);
+      const ticketSessionId = useMemo(() => `ticket_${Math.random().toString(36).slice(2)}`, []);
+      const ticketMessagesRef = useRef(null);
+      const [ticketInput, setTicketInput] = useState("");
+      const [ticketPhoneLookup, setTicketPhoneLookup] = useState("");
+      const [isCheckingPurchase, setIsCheckingPurchase] = useState(false);
+      const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+      const [verifiedOrderCount, setVerifiedOrderCount] = useState(0);
+      const [currentTicketId, setCurrentTicketId] = useState(null);
+      const [currentTicketCategory, setCurrentTicketCategory] = useState("");
+      const [currentTicketStatus, setCurrentTicketStatus] = useState("");
+      const [lookupTickets, setLookupTickets] = useState([]);
+      const [isLoadingLookupTickets, setIsLoadingLookupTickets] = useState(false);
+      const [isLoadingTicketDetail, setIsLoadingTicketDetail] = useState(false);
+      const [ticketMessages, setTicketMessages] = useState([
+        {
+          id: Date.now() + Math.random(),
+          role: "ai",
+          html: "Ticket CSKH: Vui lòng nhập số điện thoại và bấm <strong>Xác minh</strong> để kiểm tra bạn đã từng mua hàng trước khi gửi ticket."
+        }
+      ]);
+      const [chatMessages, setChatMessages] = useState([
+        {
+          id: Date.now(),
+          role: "ai",
+          html: "Xin chào! Tôi có thể giúp bạn tìm laptop phù hợp và chốt đơn nhanh."
+        }
+      ]);
+
+      function pushToast(message, type = "success") {
+        const id = `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        setToasts((prev) => [...prev, { id, message, type }]);
+        window.setTimeout(() => {
+          setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, 3000);
+      }
+
+      function refreshCartCount() {
+        const total = Cart.getAll().reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+        setCartCount(total);
+      }
+
+      async function loadProducts(searchText = "") {
+        setLoadingProducts(true);
+        setProductsError("");
+        try {
+          const data = await fetchProducts(searchText);
+          setProducts(Array.isArray(data) ? data : []);
+        } catch (err) {
+          setProductsError(`Lỗi tải sản phẩm: ${err.message}. Hãy đảm bảo backend đang chạy tại localhost:8000`);
+          setProducts([]);
+        } finally {
+          setLoadingProducts(false);
+        }
+      }
+
+      useEffect(() => {
+        loadProducts("");
+        refreshCartCount();
+      }, []);
+
+      useEffect(() => {
+        window.clearTimeout(searchTimerRef.current);
+        searchTimerRef.current = window.setTimeout(() => {
+          loadProducts(search.trim());
+        }, 400);
+        return () => window.clearTimeout(searchTimerRef.current);
+      }, [search]);
+
+      useEffect(() => {
+        if (!chatMessagesRef.current) return;
+        chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+      }, [chatMessages, isOrderFormOpen, isChatMinimized]);
+
+      useEffect(() => {
+        if (!ticketMessagesRef.current) return;
+        ticketMessagesRef.current.scrollTop = ticketMessagesRef.current.scrollHeight;
+      }, [ticketMessages, isTicketBoxMinimized]);
+
+      function appendUserMessage(text) {
+        const safeText = escapeHtml(text);
+        setChatMessages((prev) => [...prev, { id: Date.now() + Math.random(), role: "user", html: safeText }]);
+      }
+
+      function appendAiMessage(htmlText) {
+        setChatMessages((prev) => [...prev, { id: Date.now() + Math.random(), role: "ai", html: htmlText }]);
+      }
+
+      function appendTicketUserMessage(text) {
+        const safeText = escapeHtml(text);
+        setTicketMessages((prev) => [...prev, { id: Date.now() + Math.random(), role: "user", html: safeText }]);
+      }
+
+      function appendTicketAiMessage(htmlText) {
+        setTicketMessages((prev) => [...prev, { id: Date.now() + Math.random(), role: "ai", html: htmlText }]);
+      }
+
+      function openChatCheckoutForm(notifyWhenOpen = true) {
+        if (isOrderFormOpen) {
+          if (notifyWhenOpen) {
+            appendAiMessage("Form chốt đơn đang mở. Bạn điền thông tin rồi bấm \"Xác nhận đặt hàng\" nhé.");
+          }
+          return false;
+        }
+        setIsOrderFormOpen(true);
+        return true;
+      }
+
+      function shouldConvertToCheckoutForm(aiResponseText) {
+        if (!aiResponseText) return false;
+        const plainText = aiResponseText
+          .replace(/<[^>]*>/g, " ")
+          .replace(/\s+/g, " ")
+          .trim()
+          .toLowerCase();
+
+        if (!CHECKOUT_INFO_REQUEST_REGEX.test(plainText)) return false;
+
+        const requiredSignals = ["họ và tên", "số điện thoại"];
+        const optionalSignals = ["địa chỉ", "cccd", "tạo đơn"];
+        const requiredCount = requiredSignals.filter((k) => plainText.includes(k)).length;
+        const optionalCount = optionalSignals.filter((k) => plainText.includes(k)).length;
+
+        return requiredCount >= 2 && optionalCount >= 1;
+      }
+
+      function extractSelectedProductIds(text = "") {
+        const ids = [];
+        PRODUCT_ID_REGEX.lastIndex = 0;
+        let match;
+
+        while ((match = PRODUCT_ID_REGEX.exec(text)) !== null) {
+          const id = Number(match[1]);
+          if (!Number.isNaN(id) && !ids.includes(id)) ids.push(id);
+        }
+        return ids;
+      }
+
+      function getSelectedProductsFromMessage(message = "", latestRecommended = []) {
+        if (!SELECT_PRODUCT_INTENT_REGEX.test(message)) return [];
+
+        const pickedIds = extractSelectedProductIds(message);
+        if (pickedIds.length) {
+          return pickedIds
+            .map((id) => rememberedRecommendedProductsRef.current.get(id))
+            .filter(Boolean);
+        }
+
+        if (Array.isArray(latestRecommended) && latestRecommended.length === 1) {
+          return [latestRecommended[0]];
+        }
+
+        return [];
+      }
+
+      function autoAddSelectedProductsFromChat(userMessage = "", latestRecommended = []) {
+        const selectedProducts = getSelectedProductsFromMessage(userMessage, latestRecommended);
+        if (!selectedProducts.length) return { added: [], alreadyInCart: [] };
+
+        const cartItems = Cart.getAll();
+        const added = [];
+        const alreadyInCart = [];
+
+        for (const product of selectedProducts) {
+          const existed = cartItems.some((item) => item.product_id === product.id);
+          if (existed) {
+            alreadyInCart.push(product);
+            continue;
+          }
+          Cart.add(product, 1);
+          added.push(product);
+        }
+
+        if (added.length) refreshCartCount();
+
+        return { added, alreadyInCart };
+      }
+
+      async function handleViewCurrentTicketDetail() {
+        if (!currentTicketId) {
+          appendTicketAiMessage("Hiện chưa có ticket nào trong phiên này. Bạn hãy gửi nội dung hỗ trợ để hệ thống tạo ticket.");
+          return;
+        }
+
+        setIsLoadingTicketDetail(true);
+        try {
+          const ticket = await fetchTicketDetail(currentTicketId);
+          setCurrentTicketCategory(ticket.category || "");
+          setCurrentTicketStatus(ticket.status || "");
+
+          const messageCount = Array.isArray(ticket.messages) ? ticket.messages.length : 0;
+          const summaryText = ticket.ai_summary ? escapeHtml(ticket.ai_summary) : "Chưa có tóm tắt";
+          appendTicketAiMessage(
+            `Ticket #${ticket.id}<br>` +
+              `- Chủ đề: ${escapeHtml(ticket.subject || "Yêu cầu hỗ trợ")}<br>` +
+              `- Loại: ${escapeHtml(ticket.category || "OTHER")}<br>` +
+              `- Trạng thái: ${escapeHtml(ticket.status || "Moi")}<br>` +
+              `- Số lượt trao đổi: ${messageCount}<br>` +
+              `- Tóm tắt AI: ${summaryText}`
+          );
+        } catch (err) {
+          appendTicketAiMessage(`Không thể tải chi tiết ticket: ${escapeHtml(err.message)}`);
+          pushToast("Lấy chi tiết ticket thất bại.", "error");
+        } finally {
+          setIsLoadingTicketDetail(false);
+        }
+      }
+
+      async function handleLookupTicketByPhone() {
+        const phone = ticketPhoneLookup.trim();
+        if (!phone) {
+          pushToast("Nhập số điện thoại để tra ticket.", "error");
+          return;
+        }
+
+        setIsLoadingLookupTickets(true);
+        try {
+          const tickets = await fetchTicketsByPhone(phone);
+          const sortedTickets = Array.isArray(tickets) ? tickets : [];
+          setLookupTickets(sortedTickets);
+
+          if (!sortedTickets.length) {
+            appendTicketAiMessage(`Chưa tìm thấy ticket nào cho SĐT ${escapeHtml(phone)}.`);
+            return;
+          }
+
+          const rows = sortedTickets
+            .slice(0, 5)
+            .map(
+              (t) =>
+                `#${t.id} - ${escapeHtml(t.category || "OTHER")} - ${escapeHtml(t.status || "Moi")} - ${escapeHtml(formatDateTime(t.created_at))}`
+            )
+            .join("<br>");
+          appendTicketAiMessage(`Đã tìm thấy ${sortedTickets.length} ticket theo SĐT ${escapeHtml(phone)}:<br>${rows}`);
+        } catch (err) {
+          setLookupTickets([]);
+          appendTicketAiMessage(`Không thể tra cứu ticket theo SĐT: ${escapeHtml(err.message)}`);
+          pushToast("Tra cứu ticket thất bại.", "error");
+        } finally {
+          setIsLoadingLookupTickets(false);
+        }
+      }
+
+      async function handleSendMessage() {
+        const msg = chatInput.trim();
+        if (!msg) return;
+
+        setChatInput("");
+        appendUserMessage(msg);
+        const thinkingId = Date.now() + Math.random();
+        setChatMessages((prev) => [...prev, { id: thinkingId, role: "ai", html: "<em>Đang suy nghĩ...</em>" }]);
+
+        let openedByUserIntent = false;
+        if (ORDER_INTENT_REGEX.test(msg)) {
+          openedByUserIntent = openChatCheckoutForm(false);
+        }
+
+        try {
+          const data = await sendAssistantMessage(sessionId, msg);
+          const recommended = Array.isArray(data.recommended_products) ? data.recommended_products : [];
+
+          for (const p of recommended) {
+            if (p && typeof p.id === "number") {
+              rememberedRecommendedProductsRef.current.set(p.id, p);
+            }
+          }
+
+          const autoAddResult = autoAddSelectedProductsFromChat(msg, recommended);
+          let aiHtml = "";
+
+          if (shouldConvertToCheckoutForm(data.response)) {
+            aiHtml = "Mình đã mở form chốt đơn nhanh ngay bên dưới, bạn chỉ cần điền thông tin là xong.";
+            if (!openedByUserIntent) {
+              openChatCheckoutForm(false);
+            }
+          } else {
+            aiHtml = `${formatAiText(data.response)}${renderRecommendedProductsHtml(recommended)}`;
+          }
+
+          setChatMessages((prev) => prev.map((m) => (m.id === thinkingId ? { ...m, html: aiHtml } : m)));
+
+          if (autoAddResult.added.length) {
+            const names = autoAddResult.added.map((p) => p.name).join(", ");
+            appendAiMessage(`Mình đã tự thêm vào giỏ: ${escapeHtml(names)}. Bạn có thể chốt đơn ngay bên dưới.`);
+            pushToast(`Đã thêm ${autoAddResult.added.length} sản phẩm từ chat vào giỏ`, "success");
+            openChatCheckoutForm(false);
+          } else if (autoAddResult.alreadyInCart.length && ORDER_INTENT_REGEX.test(msg)) {
+            appendAiMessage("Sản phẩm bạn chọn đã có trong giỏ. Mình mở form để bạn chốt đơn luôn nhé.");
+            openChatCheckoutForm(false);
+          }
+        } catch (err) {
+          setChatMessages((prev) => prev.map((m) => (m.id === thinkingId ? { ...m, html: "❌ Lỗi kết nối AI. Hãy kiểm tra backend." } : m)));
+        }
+      }
+
+      async function handleVerifyTicketPhone() {
+        const phone = ticketPhoneLookup.trim();
+        if (!phone) {
+          pushToast("Nhập số điện thoại để xác minh.", "error");
+          return;
+        }
+
+        setIsCheckingPurchase(true);
+        try {
+          const orders = await trackOrderByPhone(phone);
+          const count = Array.isArray(orders) ? orders.length : 0;
+
+          if (!count) {
+            setIsPhoneVerified(false);
+            setVerifiedOrderCount(0);
+            appendTicketAiMessage(`SĐT ${escapeHtml(phone)} chưa có lịch sử mua hàng tại shop, nên chưa thể tạo ticket CSKH.`);
+            pushToast("SĐT chưa từng mua hàng.", "error");
+            return;
+          }
+
+          setIsPhoneVerified(true);
+          setVerifiedOrderCount(count);
+          appendTicketAiMessage(`Đã xác minh SĐT ${escapeHtml(phone)} với ${count} đơn hàng. Bạn có thể gửi ticket hỗ trợ ngay.`);
+          pushToast("Xác minh mua hàng thành công.", "success");
+        } catch (err) {
+          setIsPhoneVerified(false);
+          setVerifiedOrderCount(0);
+          appendTicketAiMessage(`Không xác minh được SĐT ${escapeHtml(phone)}: ${escapeHtml(err.message)}`);
+          pushToast("Xác minh số điện thoại thất bại.", "error");
+        } finally {
+          setIsCheckingPurchase(false);
+        }
+      }
+
+      async function handleSendTicketMessage() {
+        const msg = ticketInput.trim();
+        if (!msg) return;
+
+        if (!isPhoneVerified) {
+          appendTicketAiMessage("Bạn cần xác minh số điện thoại đã từng mua hàng trước khi gửi ticket.");
+          return;
+        }
+
+        setTicketInput("");
+        appendTicketUserMessage(msg);
+        const thinkingId = Date.now() + Math.random();
+        setTicketMessages((prev) => [...prev, { id: thinkingId, role: "ai", html: "<em>Đang xử lý ticket...</em>" }]);
+
+        try {
+          const data = await sendChatMessage(ticketSessionId, msg, {
+            customer_phone: ticketPhoneLookup.trim(),
+            customer_name: null,
+            customer_address: null
+          });
+
+          if (data.ticket_id) {
+            setCurrentTicketId(data.ticket_id);
+            setCurrentTicketCategory(data.category || "");
+            setCurrentTicketStatus(data.status || "");
+          }
+
+          const recommended = Array.isArray(data.recommended_products) ? data.recommended_products : [];
+          const aiHtml = `${formatAiText(data.response)}${renderRecommendedProductsHtml(recommended)}`;
+          setTicketMessages((prev) => prev.map((m) => (m.id === thinkingId ? { ...m, html: aiHtml } : m)));
+        } catch (err) {
+          setTicketMessages((prev) =>
+            prev.map((m) =>
+              m.id === thinkingId ? { ...m, html: `Không gửi được ticket: ${escapeHtml(err.message)}` } : m
+            )
+          );
+          pushToast("Gửi ticket thất bại.", "error");
+        }
+      }
+
+      function handleAddToCart(product) {
+        Cart.add(product);
+        refreshCartCount();
+        pushToast(`Đã thêm \"${product.name}\" vào giỏ hàng!`, "success");
+      }
+
+      async function handleChatOrderSubmit(e) {
+        e.preventDefault();
+
+        const items = Cart.getAll();
+        if (!items.length) {
+          appendAiMessage("Giỏ hàng đang trống. Bạn thêm sản phẩm trước rồi chốt đơn nhé.");
+          pushToast("Giỏ hàng trống, chưa thể tạo đơn.", "error");
+          return;
+        }
+
+        const payload = {
+          customer_name: orderForm.customer_name.trim(),
+          customer_phone: orderForm.customer_phone.trim(),
+          customer_address: orderForm.customer_address.trim() || null,
+          customer_cccd: orderForm.customer_cccd.trim() || null,
+          items: items.map((i) => ({ product_id: i.product_id, quantity: i.quantity }))
+        };
+
+        setIsCreatingOrder(true);
+        try {
+          const created = await checkout(payload);
+          Cart.clear();
+          refreshCartCount();
+          appendAiMessage(`Đã tạo đơn thành công #${created.id}. Nhân viên sẽ liên hệ qua SĐT ${escapeHtml(payload.customer_phone)}.`);
+          pushToast(`Đặt hàng thành công! Mã đơn #${created.id}`, "success");
+          setIsOrderFormOpen(false);
+          setOrderForm({ customer_name: "", customer_phone: "", customer_address: "", customer_cccd: "" });
+        } catch (err) {
+          appendAiMessage(`Không thể tạo đơn lúc này: ${escapeHtml(err.message)}`);
+          pushToast("Tạo đơn thất bại, vui lòng kiểm tra lại thông tin.", "error");
+        } finally {
+          setIsCreatingOrder(false);
+        }
+      }
+
+      return React.createElement(
+        React.Fragment,
+        null,
+        React.createElement(
+          "div",
+          { className: "relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden" },
+          React.createElement(
+            "div",
+            { className: "layout-container flex h-full grow flex-col" },
+            React.createElement(
+              "div",
+              { className: "px-4 md:px-10 lg:px-24 xl:px-40 flex flex-1 justify-center py-5" },
+              React.createElement(
+                "div",
+                { className: "layout-content-container flex flex-col max-w-[1200px] flex-1" },
+                React.createElement(
+                  "header",
+                  { className: "sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-4 md:px-10 py-4 mb-6 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur" },
+                  React.createElement(
+                    "div",
+                    { className: "flex items-center gap-4 md:gap-8" },
+                    React.createElement(
+                      "div",
+                      { className: "flex items-center gap-3 text-primary" },
+                      React.createElement("span", { className: "material-symbols-outlined text-3xl" }, "laptop_mac"),
+                      React.createElement("h2", { className: "text-slate-900 dark:text-white text-lg md:text-xl font-bold leading-tight" }, "TechBook Store")
+                    ),
+                    React.createElement(
+                      "label",
+                      { className: "hidden md:flex flex-col min-w-40 h-10 max-w-80" },
+                      React.createElement(
+                        "div",
+                        { className: "flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100 dark:bg-slate-800" },
+                        React.createElement(
+                          "div",
+                          { className: "text-slate-500 dark:text-slate-400 flex items-center justify-center pl-4" },
+                          React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "search")
+                        ),
+                        React.createElement("input", {
+                          className: "form-input flex w-full min-w-0 flex-1 rounded-lg text-slate-900 dark:text-white border-none bg-transparent h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal focus:outline-none focus:ring-0",
+                          placeholder: "Search laptops...",
+                          value: search,
+                          onChange: (e) => setSearch(e.target.value)
+                        })
+                      )
+                    )
+                  ),
+                  React.createElement(
+                    "div",
+                    { className: "flex items-center gap-3 md:gap-8" },
+                    React.createElement(
+                      "div",
+                      { className: "hidden md:flex items-center gap-7" },
+                      React.createElement("a", { className: "text-primary font-bold leading-normal border-b-2 border-primary pb-1", href: "#" }, "Laptops"),
+                      React.createElement("a", { className: "text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors", href: "track-order.html" }, "Tra Cứu Đơn")
+                    ),
+                    React.createElement(
+                      "button",
+                      {
+                        onClick: () => (window.location.href = "checkout.html"),
+                        className: "relative flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                      },
+                      React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "shopping_cart"),
+                      React.createElement(
+                        "span",
+                        {
+                          className: "absolute -top-1.5 -right-1.5 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-primary text-white text-[10px] font-bold leading-none flex items-center justify-center"
+                        },
+                        cartCount > 0 ? cartCount : ""
+                      )
+                    ),
+                    React.createElement("div", {
+                      className: "bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary hidden sm:block",
+                      style: {
+                        backgroundImage:
+                          'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdQ89XGHZmD-RaAISq-BND-OmD_c123Dn-8_H4EaPWhDtpCXY7n3jFQEF4Qn61w_DPh0HeCt8jFPxN4TplzAB7LXzR1r9v9_fBGooFPhanpCnOESGuvtHmFvkaRlbOG4RYCjuxAmCDf0tFz9_VCaw2RLmbuKGNnRNWZPViV84jlERZG6mkAygGbP6_PInIhhpqwFmhqEjZJ9zBTJm4FHicpWlLmUIdWEnWwI5kMkgEXhLq9Lu4B7uhcQePtfH_eN5NrCA4VY1-l882")'
+                      }
+                    })
+                  )
+                ),
+                React.createElement(
+                  "div",
+                  { className: "@container mb-10" },
+                  React.createElement(
+                    "div",
+                    { className: "@[480px]:p-4" },
+                    React.createElement(
+                      "div",
+                      {
+                        className:
+                          "flex min-h-[360px] md:min-h-[400px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-center justify-center p-8 relative overflow-hidden",
+                        style: {
+                          backgroundImage:
+                            'linear-gradient(rgba(16, 22, 34, 0.7), rgba(16, 22, 34, 0.9)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuACr5n4Qn9AUENiT6iOzbMsCOZevLri3TpUhe3Guu1q5PzLpXGG3oFX6w_dm_Xpyu0sPQ4tQB1zBpFQLtsxfUC1pmoNi9rQmUJPL27BWzIEiTGB0wFOyhPKkDKt58xcMkIbqN46FcNVBzPidLm1aY0-kIDuQ1yF1W3G6HbCI-fRIXfaUW4YrooFJsbrswEUW1HFlRiHd7r5UhfDhiNJgoxxKGwY4oFBb_oE5jP-nNcIPPGrOnHZnXHcX5hxqMrNXY_-NXgPctXJIzyz")'
+                        }
+                      },
+                      React.createElement("div", { className: "absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent" }),
+                      React.createElement(
+                        "div",
+                        { className: "flex flex-col gap-4 text-center relative z-10 max-w-2xl" },
+                        React.createElement(
+                          "h1",
+                          { className: "text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl" },
+                          "Discover Premium Laptops"
+                        ),
+                        React.createElement(
+                          "h2",
+                          { className: "text-slate-200 text-lg font-normal leading-relaxed @[480px]:text-xl" },
+                          "Powered by AI to find your perfect match. Experience unparalleled performance and sleek design."
+                        ),
+                        React.createElement(
+                          "div",
+                          { className: "mt-4" },
+                          React.createElement(
+                            "button",
+                            {
+                              onClick: () => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" }),
+                              className:
+                                "inline-flex cursor-pointer items-center justify-center rounded-full h-12 px-8 bg-primary hover:bg-primary/90 text-white text-base font-bold tracking-[0.015em] transition-all shadow-[0_0_15px_rgba(43,108,238,0.5)]"
+                            },
+                            "Shop Now"
+                          )
+                        )
+                      )
+                    )
+                  )
+                ),
+                React.createElement(
+                  "div",
+                  { className: "flex items-center justify-between px-4 pb-6" },
+                  React.createElement("h2", { className: "text-slate-900 dark:text-white text-2xl font-bold leading-tight" }, "Featured Laptops"),
+                  React.createElement(
+                    "div",
+                    { className: "md:hidden" },
+                    React.createElement("input", {
+                      className: "rounded-lg bg-slate-100 dark:bg-slate-800 border-0 text-sm px-3 py-2",
+                      placeholder: "Search laptops...",
+                      value: search,
+                      onChange: (e) => setSearch(e.target.value)
+                    })
+                  )
+                ),
+                React.createElement(
+                  "div",
+                  { id: "product-grid", className: "grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-8 p-4 mb-24" },
+                  loadingProducts && React.createElement("div", { className: "col-span-full text-center py-10 text-slate-400" }, "Đang tải sản phẩm..."),
+                  !loadingProducts && productsError && React.createElement("div", { className: "col-span-full text-center py-10 text-red-400" }, productsError),
+                  !loadingProducts && !productsError && products.length === 0 && React.createElement("p", { className: "text-slate-400 text-center col-span-full py-8" }, "Không tìm thấy sản phẩm nào."),
+                  !loadingProducts && !productsError && products.map((p) =>
+                    React.createElement(
+                      "div",
+                      {
+                        key: p.id,
+                        className:
+                          "flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(43,108,238,0.15)] transition-all group"
+                      },
+                      React.createElement(
+                        "div",
+                        {
+                          className: "w-full aspect-video rounded-lg overflow-hidden bg-slate-800 flex items-center justify-center cursor-pointer",
+                          onClick: () => (window.location.href = `product-detail.html?id=${p.id}`)
+                        },
+                        p.image_url
+                          ? React.createElement("img", { src: p.image_url, alt: p.name, className: "w-full h-full object-cover" })
+                          : React.createElement("span", { className: "material-symbols-outlined text-5xl text-slate-600" }, "laptop_mac")
+                      ),
+                      React.createElement(
+                        "div",
+                        { className: "flex flex-col flex-1" },
+                        React.createElement(
+                          "div",
+                          { className: "flex justify-between items-start mb-2 gap-2" },
+                          React.createElement(
+                            "h3",
+                            {
+                              className: "text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer",
+                              onClick: () => (window.location.href = `product-detail.html?id=${p.id}`)
+                            },
+                            p.name
+                          ),
+                          React.createElement("span", { className: "text-primary font-bold text-lg whitespace-nowrap" }, formatPrice(p.price))
+                        ),
+                        React.createElement("p", { className: "text-slate-500 dark:text-slate-400 text-sm mb-1" }, `Hãng: ${p.brand || "N/A"}`),
+                        p.specs && React.createElement("p", { className: "text-slate-500 dark:text-slate-400 text-sm mb-3" }, formatSpecs(p.specs)),
+                        React.createElement(
+                          "p",
+                          { className: `text-sm mb-3 ${p.stock_quantity > 0 ? "text-green-400" : "text-red-400"}` },
+                          p.stock_quantity > 0 ? `Còn ${p.stock_quantity} sản phẩm` : "Hết hàng"
+                        ),
+                        React.createElement(
+                          "button",
+                          {
+                            disabled: p.stock_quantity === 0,
+                            onClick: () => handleAddToCart(p),
+                            className:
+                              "mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors text-sm font-bold gap-2 disabled:opacity-40"
+                          },
+                          React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "add_shopping_cart"),
+                          "Thêm vào giỏ"
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+
+        React.createElement(
+          "div",
+          {
+            className:
+              "fixed bottom-6 right-3 sm:right-6 w-[min(20rem,calc(100vw-1.5rem))] flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden z-40 max-h-[calc(100vh-7rem)]"
+          },
+          React.createElement(
+            "div",
+            { className: "bg-primary px-4 py-3 flex justify-between items-center text-white cursor-pointer" },
+            React.createElement(
+              "div",
+              { className: "flex items-center gap-2" },
+              React.createElement("span", { className: "material-symbols-outlined" }, "smart_toy"),
+              React.createElement("h4", { className: "font-bold text-sm" }, "TechAI Assistant")
+            ),
+            React.createElement(
+              "button",
+              {
+                className: "hover:text-white/80 transition-colors",
+                onClick: () => setIsChatMinimized((prev) => !prev)
+              },
+              React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "minimize")
+            )
+          ),
+          !isChatMinimized && React.createElement(
+            React.Fragment,
+            null,
+            React.createElement(
+              "div",
+              { ref: chatMessagesRef, className: "p-4 flex flex-col gap-4 h-64 overflow-y-auto bg-slate-50 dark:bg-slate-800/50" },
+              chatMessages.map((m) =>
+                React.createElement(
+                  "div",
+                  { key: m.id, className: m.role === "user" ? "flex justify-end" : "flex justify-start" },
+                  m.role === "user"
+                    ? React.createElement("div", {
+                        className: "bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg rounded-tr-none px-3 py-2 max-w-[80%] break-words",
+                        dangerouslySetInnerHTML: { __html: m.html }
+                      })
+                    : React.createElement(
+                        "div",
+                        { className: "flex gap-2 max-w-[90%]" },
+                        React.createElement(
+                          "div",
+                          { className: "bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1" },
+                          React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "smart_toy")
+                        ),
+                        React.createElement("div", {
+                          className:
+                            "bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm break-words",
+                          dangerouslySetInnerHTML: { __html: m.html }
+                        })
+                      )
+                )
+              ),
+              isOrderFormOpen && React.createElement(
+                "div",
+                { className: "flex justify-start" },
+                React.createElement(
+                  "div",
+                  { className: "flex gap-2 max-w-[95%]" },
+                  React.createElement(
+                    "div",
+                    { className: "bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1" },
+                    React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "smart_toy")
+                  ),
+                  React.createElement(
+                    "div",
+                    {
+                      className:
+                        "bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-3 shadow-sm w-full"
+                    },
+                    React.createElement("p", { className: "font-semibold text-slate-900 dark:text-white mb-2" }, "Chốt đơn nhanh trong chat"),
+                    React.createElement("p", { className: "text-xs text-slate-500 dark:text-slate-400 mb-3" }, `Giỏ hiện có ${Cart.getAll().length} sản phẩm.`),
+                    React.createElement(
+                      "form",
+                      { className: "space-y-2", onSubmit: handleChatOrderSubmit },
+                      React.createElement("input", {
+                        required: true,
+                        className:
+                          "w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm",
+                        placeholder: "Họ và tên",
+                        value: orderForm.customer_name,
+                        onChange: (e) => setOrderForm((prev) => ({ ...prev, customer_name: e.target.value }))
+                      }),
+                      React.createElement("input", {
+                        required: true,
+                        pattern: "[0-9]{10,11}",
+                        className:
+                          "w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm",
+                        placeholder: "Số điện thoại",
+                        value: orderForm.customer_phone,
+                        onChange: (e) => setOrderForm((prev) => ({ ...prev, customer_phone: e.target.value }))
+                      }),
+                      React.createElement("input", {
+                        className:
+                          "w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm",
+                        placeholder: "Địa chỉ giao hàng",
+                        value: orderForm.customer_address,
+                        onChange: (e) => setOrderForm((prev) => ({ ...prev, customer_address: e.target.value }))
+                      }),
+                      React.createElement("input", {
+                        className:
+                          "w-full rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm",
+                        placeholder: "CCCD (không bắt buộc)",
+                        value: orderForm.customer_cccd,
+                        onChange: (e) => setOrderForm((prev) => ({ ...prev, customer_cccd: e.target.value }))
+                      }),
+                      React.createElement(
+                        "div",
+                        { className: "flex gap-2 pt-1" },
+                        React.createElement(
+                          "button",
+                          {
+                            type: "submit",
+                            disabled: isCreatingOrder,
+                            className: "flex-1 bg-primary hover:bg-primary/90 text-white rounded-lg py-2 text-sm font-semibold disabled:opacity-60"
+                          },
+                          isCreatingOrder ? "Đang tạo đơn..." : "Xác nhận đặt hàng"
+                        ),
+                        React.createElement(
+                          "button",
+                          {
+                            type: "button",
+                            className: "px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-xs",
+                            onClick: () => (window.location.href = "checkout.html")
+                          },
+                          "Trang checkout"
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800" },
+              React.createElement(
+                "div",
+                {
+                  className:
+                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+                },
+                React.createElement("input", {
+                  className:
+                    "flex-1 bg-transparent border-none text-sm text-slate-900 dark:text-white focus:ring-0 p-0 placeholder:text-slate-500",
+                  placeholder: "Hỏi về cấu hình, giá cả...",
+                  type: "text",
+                  value: chatInput,
+                  onChange: (e) => setChatInput(e.target.value),
+                  onKeyDown: (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }
+                }),
+                React.createElement(
+                  "button",
+                  {
+                    className: "text-primary hover:text-primary/80 flex items-center justify-center p-1",
+                    onClick: handleSendMessage
+                  },
+                  React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "send")
+                )
+              ),
+              React.createElement(
+                "div",
+                { className: "mt-2 flex items-center justify-between gap-2" },
+                React.createElement(
+                  "div",
+                  { className: "text-[11px] text-slate-500 dark:text-slate-400" },
+                  "Chat tư vấn sản phẩm và hỗ trợ chốt đơn"
+                ),
+                React.createElement(
+                  "button",
+                  {
+                    className: "text-xs font-semibold text-primary hover:text-primary/80 transition-colors",
+                    onClick: () => openChatCheckoutForm(true)
+                  },
+                  "Chốt đơn trong chat"
+                )
+              )
+            )
+          )
+        ),
+
+        React.createElement(
+          "div",
+          {
+            className:
+              "fixed bottom-6 left-3 sm:left-6 w-[min(22rem,calc(100vw-1.5rem))] flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden z-40 max-h-[calc(100vh-7rem)]"
+          },
+          React.createElement(
+            "div",
+            { className: "bg-slate-900 px-4 py-3 flex justify-between items-center text-white cursor-pointer" },
+            React.createElement(
+              "div",
+              { className: "flex items-center gap-2" },
+              React.createElement("span", { className: "material-symbols-outlined" }, "support_agent"),
+              React.createElement("h4", { className: "font-bold text-sm" }, "Ticket CSKH")
+            ),
+            React.createElement(
+              "button",
+              {
+                className: "hover:text-white/80 transition-colors",
+                onClick: () => setIsTicketBoxMinimized((prev) => !prev)
+              },
+              React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "minimize")
+            )
+          ),
+          !isTicketBoxMinimized && React.createElement(
+            React.Fragment,
+            null,
+            React.createElement(
+              "div",
+              { className: "p-3 border-b border-slate-200 dark:border-slate-800 space-y-2 bg-slate-50 dark:bg-slate-800/40" },
+              React.createElement(
+                "div",
+                { className: "flex gap-2" },
+                React.createElement("input", {
+                  className: "flex-1 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-2 py-1.5 text-xs",
+                  placeholder: "Số điện thoại đã mua hàng",
+                  value: ticketPhoneLookup,
+                  onChange: (e) => {
+                    setTicketPhoneLookup(e.target.value);
+                    setIsPhoneVerified(false);
+                    setVerifiedOrderCount(0);
+                  }
+                }),
+                React.createElement(
+                  "button",
+                  {
+                    className: "text-xs rounded-md bg-primary text-white px-3 py-1.5 hover:bg-primary/90 disabled:opacity-60",
+                    onClick: handleVerifyTicketPhone,
+                    disabled: isCheckingPurchase
+                  },
+                  isCheckingPurchase ? "Đang kiểm tra..." : "Xác minh"
+                )
+              ),
+              React.createElement(
+                "p",
+                { className: `text-[11px] ${isPhoneVerified ? "text-green-600 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}` },
+                isPhoneVerified
+                  ? `Đã xác minh mua hàng (${verifiedOrderCount} đơn). Có thể gửi ticket.`
+                  : "Chưa xác minh mua hàng. Bạn cần xác minh trước khi gửi ticket."
+              )
+            ),
+            React.createElement(
+              "div",
+              { ref: ticketMessagesRef, className: "p-4 flex flex-col gap-4 h-60 overflow-y-auto bg-white dark:bg-slate-900" },
+              ticketMessages.map((m) =>
+                React.createElement(
+                  "div",
+                  { key: m.id, className: m.role === "user" ? "flex justify-end" : "flex justify-start" },
+                  m.role === "user"
+                    ? React.createElement("div", {
+                        className: "bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-lg rounded-tr-none px-3 py-2 max-w-[85%] break-words",
+                        dangerouslySetInnerHTML: { __html: m.html }
+                      })
+                    : React.createElement(
+                        "div",
+                        { className: "flex gap-2 max-w-[92%]" },
+                        React.createElement(
+                          "div",
+                          { className: "bg-primary/20 text-primary rounded-full h-8 w-8 flex items-center justify-center flex-shrink-0 mt-1" },
+                          React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "support_agent")
+                        ),
+                        React.createElement("div", {
+                          className:
+                            "bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg rounded-tl-none px-3 py-2 shadow-sm break-words",
+                          dangerouslySetInnerHTML: { __html: m.html }
+                        })
+                      )
+                )
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 space-y-2" },
+              React.createElement(
+                "div",
+                { className: "text-[11px] text-slate-500 dark:text-slate-400" },
+                currentTicketId
+                  ? `Ticket #${currentTicketId} | ${formatTicketCategory(currentTicketCategory)} | ${formatTicketStatus(currentTicketStatus)}`
+                  : "Chưa có ticket"
+              ),
+              React.createElement(
+                "p",
+                { className: "text-[11px] text-slate-500 dark:text-slate-400" },
+                "AI sẽ chủ động hỏi đánh giá hài lòng, bạn chỉ cần trả lời trong khung chat (ví dụ: 5 sao)."
+              ),
+              React.createElement(
+                "div",
+                {
+                  className:
+                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+                },
+                React.createElement("input", {
+                  className:
+                    "flex-1 bg-transparent border-none text-sm text-slate-900 dark:text-white focus:ring-0 p-0 placeholder:text-slate-500",
+                  placeholder: isPhoneVerified ? "Mô tả yêu cầu hỗ trợ của bạn..." : "Xác minh số điện thoại trước khi gửi ticket",
+                  type: "text",
+                  value: ticketInput,
+                  disabled: !isPhoneVerified,
+                  onChange: (e) => setTicketInput(e.target.value),
+                  onKeyDown: (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSendTicketMessage();
+                    }
+                  }
+                }),
+                React.createElement(
+                  "button",
+                  {
+                    className: "text-primary hover:text-primary/80 flex items-center justify-center p-1 disabled:opacity-50",
+                    onClick: handleSendTicketMessage,
+                    disabled: !isPhoneVerified
+                  },
+                  React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "send")
+                )
+              ),
+              React.createElement(
+                "div",
+                { className: "flex gap-2" },
+                React.createElement(
+                  "button",
+                  {
+                    className: "flex-1 text-xs rounded-md border border-slate-300 dark:border-slate-600 px-2 py-1 hover:border-primary",
+                    onClick: handleViewCurrentTicketDetail,
+                    disabled: isLoadingTicketDetail
+                  },
+                  isLoadingTicketDetail ? "Đang tải..." : "Chi tiết"
+                ),
+                React.createElement(
+                  "button",
+                  {
+                    className: "flex-1 text-xs rounded-md border border-slate-300 dark:border-slate-600 px-2 py-1 hover:border-primary",
+                    onClick: handleLookupTicketByPhone,
+                    disabled: isLoadingLookupTickets
+                  },
+                  isLoadingLookupTickets ? "Đang tra..." : "Lịch sử theo SĐT"
+                )
+              ),
+              lookupTickets.length > 0 && React.createElement(
+                "p",
+                { className: "text-[11px] text-slate-500 dark:text-slate-400" },
+                `Tìm thấy ${lookupTickets.length} ticket theo SĐT này.`
+              )
+            )
+          )
+        ),
+
+        React.createElement(
+          "div",
+          { className: "fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" },
+          toasts.map((toast) =>
+            React.createElement(
+              "div",
+              {
+                key: toast.id,
+                className: `pointer-events-auto px-4 py-3 rounded-lg shadow-lg text-white font-medium flex items-center gap-2 ${toast.type === "success" ? "bg-green-600" : "bg-red-600"}`
+              },
+              React.createElement("span", { className: "material-symbols-outlined text-xl" }, toast.type === "success" ? "check_circle" : "error"),
+              React.createElement("span", null, toast.message)
+            )
+          )
+        )
+      );
+    }
+
+    createRoot(document.getElementById("root")).render(React.createElement(App));
+  </script>
+</body>
+</html>

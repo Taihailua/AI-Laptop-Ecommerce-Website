@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from . import models, schemas
 from passlib.context import CryptContext
 
@@ -52,10 +52,28 @@ def create_customer(db: Session, customer: schemas.CustomerCreate):
 
 # --- ORDER ---
 def get_orders(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Order).offset(skip).limit(limit).all()
+    return (
+        db.query(models.Order)
+        .options(
+            joinedload(models.Order.customer),
+            joinedload(models.Order.items).joinedload(models.OrderItem.product),
+        )
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 def get_order_by_phone(db: Session, phone_number: str):
-    return db.query(models.Order).join(models.Customer).filter(models.Customer.phone_number == phone_number).all()
+    return (
+        db.query(models.Order)
+        .join(models.Customer)
+        .options(
+            joinedload(models.Order.customer),
+            joinedload(models.Order.items).joinedload(models.OrderItem.product),
+        )
+        .filter(models.Customer.phone_number == phone_number)
+        .all()
+    )
 
 def create_order(db: Session, order_data: schemas.OrderCreate):
     # Tìm hoặc tạo khách hàng
@@ -96,3 +114,244 @@ def create_order(db: Session, order_data: schemas.OrderCreate):
     db.commit()
     db.refresh(db_order)
     return db_order
+
+
+# --- TICKET ---
+def _get_or_create_customer_for_ticket(
+    db: Session,
+    customer_name: str | None,
+    customer_phone: str | None,
+    customer_address: str | None,
+):
+    if not customer_phone:
+        return None
+
+    customer = get_customer_by_phone(db, customer_phone)
+    if customer:
+        if customer_name and customer.full_name != customer_name:
+            customer.full_name = customer_name
+        if customer_address and customer.address != customer_address:
+            customer.address = customer_address
+        return customer
+
+    customer = models.Customer(
+        full_name=customer_name or "Khach hang",
+        phone_number=customer_phone,
+        address=customer_address,
+    )
+    db.add(customer)
+    db.flush()
+    return customer
+
+
+def get_ticket_by_session_id(db: Session, session_id: str):
+    return (
+        db.query(models.Ticket)
+        .options(
+            joinedload(models.Ticket.messages),
+            joinedload(models.Ticket.activities),
+            joinedload(models.Ticket.customer),
+        )
+        .filter(models.Ticket.session_id == session_id)
+        .first()
+    )
+
+
+def get_ticket(db: Session, ticket_id: int):
+    return (
+        db.query(models.Ticket)
+        .options(
+            joinedload(models.Ticket.messages),
+            joinedload(models.Ticket.activities),
+            joinedload(models.Ticket.customer),
+        )
+        .filter(models.Ticket.id == ticket_id)
+        .first()
+    )
+
+
+def get_tickets_by_customer_phone(db: Session, phone_number: str, limit: int = 50):
+    return (
+        db.query(models.Ticket)
+        .join(models.Customer, models.Ticket.customer_id == models.Customer.id)
+        .options(
+            joinedload(models.Ticket.messages),
+            joinedload(models.Ticket.activities),
+            joinedload(models.Ticket.customer),
+        )
+        .filter(models.Customer.phone_number == phone_number)
+        .order_by(models.Ticket.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def get_all_tickets(db: Session, status: models.TicketStatus | None = None, limit: int = 200):
+    query = (
+        db.query(models.Ticket)
+        .options(
+            joinedload(models.Ticket.messages),
+            joinedload(models.Ticket.activities),
+            joinedload(models.Ticket.customer),
+        )
+        .order_by(models.Ticket.updated_at.desc())
+    )
+    if status is not None:
+        query = query.filter(models.Ticket.status == status)
+    return query.limit(limit).all()
+
+
+def add_ticket_activity(
+    db: Session,
+    ticket_id: int,
+    action: str,
+    actor: str = "system",
+    old_status: models.TicketStatus | None = None,
+    new_status: models.TicketStatus | None = None,
+    note: str | None = None,
+):
+    db_activity = models.TicketActivity(
+        ticket_id=ticket_id,
+        actor=actor,
+        action=action,
+        old_status=old_status,
+        new_status=new_status,
+        note=note,
+    )
+    db.add(db_activity)
+    return db_activity
+
+
+def create_ticket(
+    db: Session,
+    session_id: str,
+    subject: str | None,
+    category: models.TicketCategory,
+    customer_name: str | None = None,
+    customer_phone: str | None = None,
+    customer_address: str | None = None,
+):
+    customer = _get_or_create_customer_for_ticket(db, customer_name, customer_phone, customer_address)
+    db_ticket = models.Ticket(
+        session_id=session_id,
+        customer_id=customer.id if customer else None,
+        subject=subject,
+        category=category,
+        status=models.TicketStatus.OPEN,
+    )
+    db.add(db_ticket)
+    db.flush()
+    add_ticket_activity(
+        db,
+        ticket_id=db_ticket.id,
+        action="ticket_created",
+        actor="system",
+        old_status=None,
+        new_status=db_ticket.status,
+        note="Ticket mới được tạo",
+    )
+    return db_ticket
+
+
+def add_ticket_message(db: Session, ticket_id: int, role: str, message: str):
+    db_message = models.TicketMessage(ticket_id=ticket_id, role=role, message=message)
+    db.add(db_message)
+    return db_message
+
+
+def update_ticket_classification(
+    db: Session,
+    ticket: models.Ticket,
+    category: models.TicketCategory,
+    subject: str | None = None,
+):
+    ticket.category = category
+    if subject:
+        ticket.subject = subject
+    return ticket
+
+
+def update_ticket_status(db: Session, ticket: models.Ticket, status: models.TicketStatus):
+    old_status = ticket.status
+    ticket.status = status
+    if old_status != status:
+        add_ticket_activity(
+            db,
+            ticket_id=ticket.id,
+            action="status_changed",
+            actor="system",
+            old_status=old_status,
+            new_status=status,
+            note="Cập nhật trạng thái từ hệ thống",
+        )
+    return ticket
+
+
+def set_ticket_ai_summary(db: Session, ticket: models.Ticket, ai_summary: str | None):
+    ticket.ai_summary = ai_summary
+    return ticket
+
+
+def rate_ticket_satisfaction(db: Session, ticket: models.Ticket, score: int, note: str | None):
+    old_status = ticket.status
+    ticket.satisfaction_score = score
+    ticket.satisfaction_note = note
+    if ticket.status != models.TicketStatus.CLOSED:
+        ticket.status = models.TicketStatus.CLOSED
+    add_ticket_activity(
+        db,
+        ticket_id=ticket.id,
+        action="satisfaction_submitted",
+        actor="customer",
+        old_status=old_status,
+        new_status=ticket.status,
+        note=f"Đánh giá {score}/5" + (f" - {note}" if note else ""),
+    )
+    return ticket
+
+
+def admin_update_ticket(
+    db: Session,
+    ticket: models.Ticket,
+    status: models.TicketStatus | None,
+    note: str | None,
+    actor: str,
+):
+    old_status = ticket.status
+    if status is not None:
+        ticket.status = status
+
+    add_ticket_activity(
+        db,
+        ticket_id=ticket.id,
+        action="admin_updated_ticket",
+        actor=actor or "admin",
+        old_status=old_status,
+        new_status=ticket.status,
+        note=note,
+    )
+    return ticket
+
+
+def get_ticket_satisfaction_summary(db: Session):
+    rated_tickets = db.query(models.Ticket).filter(models.Ticket.satisfaction_score.is_not(None)).all()
+    total = len(rated_tickets)
+    counts = {i: 0 for i in range(1, 6)}
+
+    for ticket in rated_tickets:
+        if ticket.satisfaction_score in counts:
+            counts[ticket.satisfaction_score] += 1
+
+    average = 0.0
+    if total > 0:
+        average = sum(score * count for score, count in counts.items()) / total
+
+    return {
+        "total_rated_tickets": total,
+        "average_score": round(average, 2),
+        "score_1": counts[1],
+        "score_2": counts[2],
+        "score_3": counts[3],
+        "score_4": counts[4],
+        "score_5": counts[5],
+    }
