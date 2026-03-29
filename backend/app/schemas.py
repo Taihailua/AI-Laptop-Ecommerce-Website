@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List, Any
 from datetime import datetime
-from .models import OrderStatus, UserRole
+from .models import OrderStatus, UserRole, TicketCategory, TicketStatus
 
 # ----------------- User -----------------
 class UserBase(BaseModel):
@@ -92,3 +92,81 @@ class CustomerResponse(CustomerBase):
     id: int
     orders: List[OrderResponse] = []
     model_config = ConfigDict(from_attributes=True)
+
+
+# ----------------- Ticket -----------------
+class TicketMessageResponse(BaseModel):
+    id: int
+    role: str
+    message: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TicketActivityResponse(BaseModel):
+    id: int
+    actor: str
+    action: str
+    old_status: Optional[TicketStatus] = None
+    new_status: Optional[TicketStatus] = None
+    note: Optional[str] = None
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TicketCreate(BaseModel):
+    session_id: str
+    message: str
+    customer_name: Optional[str] = None
+    customer_phone: Optional[str] = None
+    customer_address: Optional[str] = None
+
+
+class TicketCustomerSummary(BaseModel):
+    id: int
+    full_name: str
+    phone_number: str
+    address: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TicketResponse(BaseModel):
+    id: int
+    session_id: str
+    customer_id: Optional[int] = None
+    subject: Optional[str] = None
+    category: TicketCategory
+    status: TicketStatus
+    ai_summary: Optional[str] = None
+    satisfaction_score: Optional[int] = None
+    satisfaction_note: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    customer: Optional[TicketCustomerSummary] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TicketDetailResponse(TicketResponse):
+    messages: List[TicketMessageResponse] = []
+    activities: List[TicketActivityResponse] = []
+
+
+class TicketSatisfactionCreate(BaseModel):
+    score: int
+    note: Optional[str] = None
+
+
+class TicketSatisfactionSummary(BaseModel):
+    total_rated_tickets: int
+    average_score: float
+    score_1: int
+    score_2: int
+    score_3: int
+    score_4: int
+    score_5: int
+
+
+class TicketAdminUpdate(BaseModel):
+    status: Optional[str] = None
+    note: Optional[str] = None
+    actor: str = "admin"
