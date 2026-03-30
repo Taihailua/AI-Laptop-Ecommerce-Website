@@ -35,3 +35,4 @@ logs/
 
 
 docker-compose.yml
+backend/chroma_db
