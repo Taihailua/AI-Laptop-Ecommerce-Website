@@ -912,10 +912,14 @@
               "div",
               { className: "p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800" },
               React.createElement(
-                "div",
+                "form",
                 {
                   className:
-                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all",
+                  onSubmit: (e) => {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
                 },
                 React.createElement("input", {
                   className:
@@ -923,19 +927,13 @@
                   placeholder: "Hỏi về cấu hình, giá cả...",
                   type: "text",
                   value: chatInput,
-                  onChange: (e) => setChatInput(e.target.value),
-                  onKeyDown: (e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }
+                  onChange: (e) => setChatInput(e.target.value)
                 }),
                 React.createElement(
                   "button",
                   {
-                    className: "text-primary hover:text-primary/80 flex items-center justify-center p-1",
-                    onClick: handleSendMessage
+                    type: "submit",
+                    className: "text-primary hover:text-primary/80 flex items-center justify-center p-1"
                   },
                   React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "send")
                 )
@@ -1067,10 +1065,14 @@
                 "AI sẽ chủ động hỏi đánh giá hài lòng, bạn chỉ cần trả lời trong khung chat (ví dụ: 5 sao)."
               ),
               React.createElement(
-                "div",
+                "form",
                 {
                   className:
-                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+                    "flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-2 border border-slate-200 dark:border-slate-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all",
+                  onSubmit: (e) => {
+                    e.preventDefault();
+                    handleSendTicketMessage();
+                  }
                 },
                 React.createElement("input", {
                   className:
@@ -1079,19 +1081,13 @@
                   type: "text",
                   value: ticketInput,
                   disabled: !isPhoneVerified,
-                  onChange: (e) => setTicketInput(e.target.value),
-                  onKeyDown: (e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleSendTicketMessage();
-                    }
-                  }
+                  onChange: (e) => setTicketInput(e.target.value)
                 }),
                 React.createElement(
                   "button",
                   {
+                    type: "submit",
                     className: "text-primary hover:text-primary/80 flex items-center justify-center p-1 disabled:opacity-50",
-                    onClick: handleSendTicketMessage,
                     disabled: !isPhoneVerified
                   },
                   React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "send")

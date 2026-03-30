@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional
+import logging
 import re
 import unicodedata
 from sqlalchemy.orm import Session
@@ -18,9 +19,22 @@ router = APIRouter(
     tags=["Chat"]
 )
 
+logger = logging.getLogger(__name__)
+
 SATISFACTION_ASK_TEXT = (
     "Nếu bạn đã hài lòng với hỗ trợ vừa rồi, vui lòng đánh giá mức độ hài lòng từ 1-5 "
     "(ví dụ: 5 sao hoặc 4/5) để mình ghi nhận chất lượng dịch vụ."
+)
+
+ASSISTANT_OUT_OF_SCOPE_TEXT = (
+    "Mình chỉ hỗ trợ các nội dung liên quan đến dịch vụ của TechShop như tư vấn laptop, "
+    "giá/cấu hình, giỏ hàng, đặt hàng, theo dõi đơn và hỗ trợ ticket CSKH. "
+    "Bạn hãy cho mình biết nhu cầu mua laptop hoặc vấn đề đơn hàng để mình hỗ trợ ngay nhé."
+)
+
+TICKET_OUT_OF_SCOPE_TEXT = (
+    "Kênh này chỉ xử lý yêu cầu CSKH của TechShop (đơn hàng, thanh toán, đổi trả, bảo hành, "
+    "kỹ thuật sản phẩm). Bạn vui lòng mô tả vấn đề liên quan đến dịch vụ của shop để mình hỗ trợ."
 )
 
 FEEDBACK_ASK_TEXT = (
@@ -59,15 +73,42 @@ class AssistantChatResponse(BaseModel):
     recommended_products: list[RecommendedProduct] = Field(default_factory=list)
 
 
-class AISatisfactionAssessmentResponse(BaseModel):
-    ticket_id: int
-    score: int
-    reason: str
-
-
 def _history_from_ticket(ticket: models.Ticket) -> list[tuple[str, str]]:
     sorted_messages = sorted(ticket.messages, key=lambda m: (m.created_at, m.id))
     return [(msg.role, msg.message) for msg in sorted_messages if msg.role in {"human", "ai"}]
+
+
+def _latest_ai_satisfaction_note(ticket: models.Ticket) -> str | None:
+    activities = sorted(ticket.activities, key=lambda a: (a.created_at, a.id), reverse=True)
+    for activity in activities:
+        if activity.action == "ai_satisfaction_assessed":
+            return activity.note
+    return None
+
+
+def _auto_assess_ticket_satisfaction(db: Session, ticket: models.Ticket) -> None:
+    # Skip auto-assessment when customer has already provided explicit rating.
+    if ticket.satisfaction_score is not None:
+        return
+
+    history = _history_from_ticket(ticket)
+    if len(history) < 4:
+        return
+
+    score, reason = estimate_customer_satisfaction_from_history(history)
+    note = f"Mức độ hài lòng ước lượng: {score}/5. Lý do: {reason}"
+    if _latest_ai_satisfaction_note(ticket) == note:
+        return
+
+    crud.add_ticket_activity(
+        db,
+        ticket_id=ticket.id,
+        action="ai_satisfaction_assessed",
+        actor="ai",
+        old_status=ticket.status,
+        new_status=ticket.status,
+        note=note,
+    )
 
 
 def _category_from_code(category_code: str) -> models.TicketCategory:
@@ -100,6 +141,84 @@ def _normalize_text(text: str) -> str:
     text = "".join(ch for ch in text if unicodedata.category(ch) != "Mn")
     text = re.sub(r"\s+", " ", text)
     return text
+
+
+def _is_greeting(normalized_text: str) -> bool:
+    if not normalized_text:
+        return False
+    greetings = [
+        "xin chao",
+        "chao",
+        "hello",
+        "hi",
+        "hey",
+        "alo",
+        "ad oi",
+        "shop oi",
+    ]
+    return normalized_text in greetings
+
+
+def _is_service_related_message(message: str) -> bool:
+    normalized = _normalize_text(message or "")
+    if not normalized:
+        return False
+
+    if _is_greeting(normalized):
+        return True
+
+    service_keywords = [
+        "laptop",
+        "may tinh",
+        "san pham",
+        "cau hinh",
+        "cpu",
+        "gpu",
+        "ram",
+        "ssd",
+        "man hinh",
+        "gaming",
+        "do hoa",
+        "van phong",
+        "gia",
+        "ngan sach",
+        "trieu",
+        "vnd",
+        "khuyen mai",
+        "gio hang",
+        "dat hang",
+        "checkout",
+        "thanh toan",
+        "don hang",
+        "ma don",
+        "van chuyen",
+        "giao hang",
+        "bao hanh",
+        "doi tra",
+        "hoan tien",
+        "ho tro",
+        "ticket",
+        "cskh",
+        "techshop",
+        "legion",
+        "tuf",
+        "aspire",
+        "thinkpad",
+        "vivobook",
+        "rog",
+        "macbook",
+        "dell",
+        "hp",
+        "lenovo",
+        "asus",
+        "acer",
+        "msi",
+    ]
+
+    if any(keyword in normalized for keyword in service_keywords):
+        return True
+
+    return bool(re.search(r"\b\d+\s*(trieu|k|nghin|vnd|d)\b", normalized))
 
 
 def _already_asked_satisfaction(history: list[tuple[str, str]]) -> bool:
@@ -285,6 +404,19 @@ def chat_assistant(request: AssistantChatRequest):
     This endpoint intentionally does not create ticket records.
     """
     try:
+        normalized = _normalize_text(request.message)
+        if _is_greeting(normalized):
+            return AssistantChatResponse(
+                response=(
+                    "Chào bạn! Mình hỗ trợ tư vấn laptop theo nhu cầu/ngân sách, "
+                    "so sánh cấu hình, và hướng dẫn đặt hàng tại TechShop."
+                ),
+                recommended_products=[],
+            )
+
+        if not _is_service_related_message(request.message):
+            return AssistantChatResponse(response=ASSISTANT_OUT_OF_SCOPE_TEXT, recommended_products=[])
+
         ai_response = get_chat_response(request.message)
         recommended_products = _build_recommendations_from_response(ai_response)
 
@@ -299,6 +431,28 @@ def chat_assistant(request: AssistantChatRequest):
 @router.post("/", response_model=ChatResponse)
 def chat_with_ai(request: ChatRequest, db: Session = Depends(get_db)):
     try:
+        normalized = _normalize_text(request.message)
+        if _is_greeting(normalized):
+            return ChatResponse(
+                response=(
+                    "Chào bạn! Kênh này hỗ trợ CSKH TechShop về đơn hàng, thanh toán, đổi trả, "
+                    "bảo hành và sự cố sản phẩm. Bạn mô tả vấn đề để mình hỗ trợ ngay nhé."
+                ),
+                ticket_id=0,
+                category=models.TicketCategory.OTHER,
+                status=models.TicketStatus.OPEN,
+                recommended_products=[],
+            )
+
+        if not _is_service_related_message(request.message):
+            return ChatResponse(
+                response=TICKET_OUT_OF_SCOPE_TEXT,
+                ticket_id=0,
+                category=models.TicketCategory.OTHER,
+                status=models.TicketStatus.OPEN,
+                recommended_products=[],
+            )
+
         ticket = crud.get_ticket_by_session_id(db, request.session_id)
         if not ticket:
             category_code, subject = classify_ticket_with_llm(request.message)
@@ -390,6 +544,14 @@ def chat_with_ai(request: ChatRequest, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(ticket)
 
+        try:
+            _auto_assess_ticket_satisfaction(db, ticket)
+            db.commit()
+            db.refresh(ticket)
+        except Exception as auto_err:
+            db.rollback()
+            logger.exception("Auto AI satisfaction assessment failed for ticket %s: %s", ticket.id, auto_err)
+
         return ChatResponse(
             response=ai_response,
             ticket_id=ticket.id,
@@ -449,30 +611,6 @@ def admin_update_ticket(ticket_id: int, payload: schemas.TicketAdminUpdate, db: 
     db.commit()
     db.refresh(ticket)
     return crud.get_ticket(db, ticket_id)
-
-
-@router.post("/admin/tickets/{ticket_id}/ai-satisfaction", response_model=AISatisfactionAssessmentResponse)
-def admin_assess_ticket_satisfaction(ticket_id: int, db: Session = Depends(get_db)):
-    ticket = crud.get_ticket(db, ticket_id)
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket khong ton tai")
-
-    history = _history_from_ticket(ticket)
-    score, reason = estimate_customer_satisfaction_from_history(history)
-    note = f"Mức độ hài lòng ước lượng: {score}/5. Lý do: {reason}"
-
-    crud.add_ticket_activity(
-        db,
-        ticket_id=ticket.id,
-        action="ai_satisfaction_assessed",
-        actor="ai",
-        old_status=ticket.status,
-        new_status=ticket.status,
-        note=note,
-    )
-    db.commit()
-
-    return AISatisfactionAssessmentResponse(ticket_id=ticket.id, score=score, reason=reason)
 
 
 @router.post("/tickets/{ticket_id}/satisfaction", response_model=schemas.TicketResponse)

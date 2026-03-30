@@ -70,7 +70,7 @@
     </main>
 
     <script type="module">
-        import { fetchAdminTickets, updateAdminTicket, assessTicketSatisfactionByAI, clearAdminToken } from './api.js';
+        import { fetchAdminTickets, updateAdminTicket, clearAdminToken } from './api.js';
 
         const STATUS_LABEL = {
             'Moi': 'Mới',
@@ -313,7 +313,6 @@
                         <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">AI đánh giá mức độ hài lòng</label>
                         <div class="flex flex-col sm:flex-row gap-2 mt-1 mb-3">
                             <input id="${aiSatId}" readonly value="${escapeHtml(aiSatText)}" class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm outline-none"/>
-                            <button data-ticket-id="${ticket.id}" class="btn-ai-sat bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-sm font-semibold">AI tự đánh giá</button>
                         </div>
                         <textarea id="${noteId}" rows="2" placeholder="Ghi chú xử lý cho ticket này..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm outline-none"></textarea>
                     </div>
@@ -351,24 +350,6 @@
                 });
             });
 
-            scope.querySelectorAll('.btn-ai-sat').forEach((btn) => {
-                btn.addEventListener('click', async () => {
-                    const ticketId = Number(btn.dataset.ticketId);
-                    btn.disabled = true;
-                    const originalText = btn.textContent;
-                    btn.textContent = 'AI đang đánh giá...';
-                    try {
-                        const result = await assessTicketSatisfactionByAI(ticketId);
-                        alert(`AI ước lượng mức hài lòng: ${result.score}/5`);
-                        await loadTickets();
-                    } catch (err) {
-                        alert(err.message || 'AI không đánh giá được ticket');
-                    } finally {
-                        btn.disabled = false;
-                        btn.textContent = originalText;
-                    }
-                });
-            });
         }
 
         function renderCustomerDetail(customerKey) {
