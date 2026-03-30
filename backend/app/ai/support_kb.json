@@ -1,0 +1,144 @@
+{
+  "version": "2026.03.30",
+  "source": "TechShop CSKH policy baseline",
+  "policy_notes": "Giá trị hiện tại là bộ policy vận hành để dùng ngay. Admin có thể cập nhật theo quy định chính thức của shop.",
+  "updated_at": "2026-03-30T00:00:00Z",
+  "policies": {
+    "order_tracking": {
+      "sla_first_response_hours": 2,
+      "expected_delivery_inner_city_days": "2-4",
+      "expected_delivery_outside_city_days": "3-7",
+      "escalate_if_no_log_update_hours": 48
+    },
+    "payment_reconciliation": {
+      "sla_first_response_hours": 2,
+      "expected_reconciliation_business_days": "1-3",
+      "requires_payment_proof": true
+    },
+    "return_refund": {
+      "return_window_days": 7,
+      "refund_processing_business_days": "3-7",
+      "requires_original_condition": true
+    },
+    "warranty_support": {
+      "warranty_intake_sla_hours": 24,
+      "technical_callback_sla_hours": 8,
+      "onsite_supported": false
+    },
+    "complaint_management": {
+      "acknowledge_sla_hours": 4,
+      "resolution_target_business_days": "1-2",
+      "escalate_critical_immediately": true
+    },
+    "attachments": {
+      "images_max_mb": 5,
+      "videos_max_mb": 20,
+      "allowed_image_types": ["jpg", "jpeg", "png", "webp"],
+      "allowed_video_types": ["mp4"]
+    }
+  },
+  "articles": [
+    {
+      "id": "order_tracking",
+      "title": "Theo dõi đơn hàng và chậm giao",
+      "category": "ORDER_TRACKING",
+      "intents": ["theo dõi đơn", "kiểm tra trạng thái", "giao trễ", "không nhận được hàng"],
+      "keywords": ["đơn hàng", "mã đơn", "vận chuyển", "giao hàng", "trạng thái"],
+      "guidance": [
+        "Xin mã đơn hoặc số điện thoại đặt hàng để tra cứu.",
+        "Thông báo trạng thái gần nhất và khung thời gian giao dự kiến.",
+        "Nếu quá SLA không cập nhật >48h, tạo escalation cho vận hành."
+      ],
+      "required_fields": ["ma_don|so_dien_thoai"],
+      "sla_target_hours": 2,
+      "escalation_rule": "Escalate vận hành khi giao trễ quá 48h không có scan mới.",
+      "handoff_when": ["đơn_thất_lạc", "trễ_nhiều_hơn_3_ngày", "khách_yêu_cầu_hủy_gấp"],
+      "customer_message_template": "Shop đã ghi nhận tình trạng đơn, em đang ưu tiên kiểm tra và sẽ cập nhật trong khung thời gian cam kết."
+    },
+    {
+      "id": "payment_issue",
+      "title": "Đối soát thanh toán",
+      "category": "PAYMENT_ISSUE",
+      "intents": ["đã trừ tiền", "không tạo đơn", "lỗi thanh toán", "thanh toán thất bại"],
+      "keywords": ["thanh toán", "chuyển khoản", "thẻ", "QR", "bị trừ tiền"],
+      "guidance": [
+        "Thu thông tin giao dịch: thời gian, số tiền, kênh thanh toán, mã tham chiếu.",
+        "Hướng dẫn khách giữ biên lai/chứng từ và gửi file chứng minh.",
+        "Thông báo thời gian đối soát 1-3 ngày làm việc."
+      ],
+      "required_fields": ["thời_gian", "số_tiền", "kênh_thanh_toán", "chứng_từ_giao_dịch"],
+      "sla_target_hours": 2,
+      "escalation_rule": "Escalate kế toán ngay khi khách đã bị trừ tiền nhưng không sinh đơn.",
+      "handoff_when": ["đối_soát_quá_3_ngày", "nghi_ngờ_duplicate_charge"],
+      "customer_message_template": "Shop đã mở yêu cầu đối soát thanh toán và sẽ cập nhật kết quả theo khung 1-3 ngày làm việc."
+    },
+    {
+      "id": "return_refund",
+      "title": "Đổi trả và hoàn tiền",
+      "category": "RETURN_REFUND",
+      "intents": ["đổi trả", "hoàn tiền", "không đúng như mô tả", "hàng lỗi"],
+      "keywords": ["đổi trả", "hoàn tiền", "trả hàng", "seal", "lỗi nhà sản xuất"],
+      "guidance": [
+        "Thu mã đơn, lý do đổi trả, hình ảnh/video tình trạng thực tế.",
+        "Kiểm tra điều kiện tiếp nhận theo cửa sổ đổi trả 7 ngày và tình trạng sản phẩm.",
+        "Nếu đủ điều kiện hoàn tiền: thông báo quy trình và mốc 3-7 ngày làm việc."
+      ],
+      "required_fields": ["mã_đơn", "lý_do", "media_chứng_minh"],
+      "sla_target_hours": 4,
+      "escalation_rule": "Escalate đội đổi-trả khi cần xác minh lỗi phần cứng.",
+      "handoff_when": ["tranh_chấp_tình_trạng_hàng", "khách_phản_hồi_tiêu_cực_liên_tiếp"],
+      "customer_message_template": "Shop đã tiếp nhận yêu cầu đổi/hoàn, sẽ xác minh và phản hồi kết quả trong khung thời gian đã cam kết."
+    },
+    {
+      "id": "technical_support",
+      "title": "Hỗ trợ kỹ thuật sau bán",
+      "category": "TECHNICAL_SUPPORT",
+      "intents": ["không lên nguồn", "màn hình đen", "wifi lỗi", "nóng máy", "sụt pin"],
+      "keywords": ["lỗi", "sự cố", "không hoạt động", "bảo hành", "kỹ thuật"],
+      "guidance": [
+        "Thu triệu chứng, tần suất lỗi, bối cảnh xảy ra lỗi và serial/mã đơn.",
+        "Hướng dẫn bước an toàn cơ bản: nguồn, sạc, khởi động lại, cập nhật driver.",
+        "Nếu lỗi lặp lại: đặt lịch tiếp nhận bảo hành trong 24h."
+      ],
+      "required_fields": ["triệu_chứng", "thời_điểm_xảy_ra", "mã_đơn_hoặc_serial"],
+      "sla_target_hours": 8,
+      "escalation_rule": "Escalate kỹ thuật ngay nếu ảnh hưởng nghiêm trọng đến vận hành máy.",
+      "handoff_when": ["không_khởi_động", "mất_dữ_liệu", "nghi_chập_cháy_nguồn"],
+      "customer_message_template": "Shop đã ghi nhận lỗi kỹ thuật và sẽ hỗ trợ theo quy trình bảo hành với mức ưu tiên cao."
+    },
+    {
+      "id": "complaint_handling",
+      "title": "Xử lý khiếu nại và trải nghiệm",
+      "category": "COMPLAINT",
+      "intents": ["khiếu nại", "không hài lòng", "thái độ phục vụ", "xử lý chậm"],
+      "keywords": ["khiếu nại", "thất vọng", "không hài lòng", "phản nàn"],
+      "guidance": [
+        "Dùng cấu trúc: xin lỗi, ghi nhận, hành động tiếp theo, thời điểm cập nhật.",
+        "Không tranh luận với khách; ưu tiên đồng cảm và đề xuất cách xử lý rõ ràng.",
+        "Cập nhật kết quả xử lý trong ticket theo mốc 1-2 ngày làm việc."
+      ],
+      "required_fields": ["nội_dung_khiếu_nại", "mức_độ_ảnh_hưởng", "kênh_liên_hệ"],
+      "sla_target_hours": 4,
+      "escalation_rule": "Escalate trưởng ca CSKH ngay với khiếu nại nghiêm trọng.",
+      "handoff_when": ["đe_dọa_pháp_lý", "yêu_cầu_gặp_quản_lý", "đánh_giá_1_sao"],
+      "customer_message_template": "Shop xin lỗi về trải nghiệm chưa tốt, đã lập yêu cầu xử lý ưu tiên và sẽ cập nhật đúng hẹn."
+    },
+    {
+      "id": "ticket_data_standard",
+      "title": "Chuẩn thông tin ticket",
+      "category": "OTHER",
+      "intents": ["tạo ticket", "bổ sung thông tin", "gửi bằng chứng"],
+      "keywords": ["ticket", "hỗ trợ", "bổ sung", "đính kèm", "hình ảnh", "video"],
+      "guidance": [
+        "Mỗi ticket cần: mô tả vấn đề, thông tin liên hệ, mốc thời gian xảy ra.",
+        "File cho phép: jpg/jpeg/png/webp tối đa 5MB và mp4 tối đa 20MB.",
+        "Nếu thiếu dữ liệu, hỏi bổ sung trước khi kết luận."
+      ],
+      "required_fields": ["mô_tả_vấn_đề", "thông_tin_liên_hệ"],
+      "sla_target_hours": 2,
+      "escalation_rule": "Không escalation nếu ticket chưa đủ thông tin tối thiểu.",
+      "handoff_when": ["khách_không_thể_bổ_sung", "vụ_việc_phức_tạp_nhiều_hệ_thống"],
+      "customer_message_template": "Để xử lý nhanh hơn, bạn vui lòng bổ sung thông tin còn thiếu theo hướng dẫn."
+    }
+  ]
+}

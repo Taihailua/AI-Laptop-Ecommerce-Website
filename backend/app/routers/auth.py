@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from ..database import get_db
@@ -10,6 +10,22 @@ router = APIRouter(prefix="/api/auth", tags=["Auth"])
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+
+def require_admin_token(
+    authorization: str | None = Header(default=None),
+    x_admin_token: str | None = Header(default=None),
+) -> str:
+    token = ""
+    if authorization and authorization.lower().startswith("bearer "):
+        token = authorization.split(" ", 1)[1].strip()
+    elif x_admin_token:
+        token = x_admin_token.strip()
+
+    if token != "mock-token":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Admin authentication required")
+
+    return token
 
 @router.post("/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):

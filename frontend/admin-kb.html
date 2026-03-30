@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Admin - Quan ly Support KB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#2b6cee", "background-light": "#f6f6f8", "background-dark": "#101622" },
+                    fontFamily: { "display": ["Plus Jakarta Sans", "ui-sans-serif", "system-ui"] },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen">
+    <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 bg-white dark:bg-slate-900 sticky top-0 z-30">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-3xl">menu_book</span>
+            <h1 class="text-xl font-bold">Admin Dashboard</h1>
+        </div>
+        <div class="flex gap-4 items-center">
+            <a href="admin.html" class="text-slate-500 hover:text-primary font-medium">Don hang</a>
+            <a href="admin-tickets.html" class="text-slate-500 hover:text-primary font-medium">Ticket CSKH</a>
+            <a href="admin-products.html" class="text-slate-500 hover:text-primary font-medium">San pham</a>
+            <a href="admin-kb.html" class="text-primary font-bold border-b-2 border-primary">Support KB</a>
+            <button id="logout-btn" class="text-red-500 hover:text-red-600 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-lg">logout</span> Thoat
+            </button>
+        </div>
+    </header>
+
+    <main class="p-6 lg:p-10 max-w-[1400px] mx-auto space-y-6">
+        <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold">Quan ly Knowledge Base CSKH</h2>
+                    <p id="kb-meta" class="text-sm text-slate-500 mt-1">Dang tai thong tin KB...</p>
+                </div>
+                <div class="flex gap-3 flex-wrap">
+                    <button id="reload-btn" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">Tai lai</button>
+                    <button id="reindex-btn" class="px-4 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-blue-50 dark:hover:bg-blue-900/20">Reindex Vector</button>
+                    <button id="save-btn" class="px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-blue-600">Luu KB</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+                <h3 class="text-lg font-bold mb-3">Policy va article (JSON)</h3>
+                <textarea id="kb-json" class="w-full min-h-[520px] font-mono text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-primary" spellcheck="false"></textarea>
+                <p id="json-status" class="text-xs text-slate-500 mt-2">Ban co the chinh policy/SLA/articles va bam Luu KB.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
+                <div>
+                    <h3 class="text-lg font-bold">Test retrieval</h3>
+                    <p class="text-xs text-slate-500 mt-1">Nhap cau hoi CSKH de xem context top-k ma chatbot se duoc nap.</p>
+                </div>
+                <input id="test-query" type="text" placeholder="Vi du: don hang cua toi giao tre 3 ngay" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary"/>
+                <button id="test-btn" class="w-full px-4 py-2 rounded-lg bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 font-semibold">Preview Context</button>
+                <pre id="preview-box" class="text-xs whitespace-pre-wrap bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-3 min-h-[240px] max-h-[420px] overflow-auto">Chua co ket qua.</pre>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import {
+            clearAdminToken,
+            getAdminToken,
+            fetchSupportKB,
+            updateSupportKB,
+            reindexSupportKB,
+            previewSupportKBContext
+        } from './api.js';
+
+        if (!getAdminToken()) {
+            window.location.href = 'admin-login.html';
+        }
+
+        const kbMetaEl = document.getElementById('kb-meta');
+        const kbJsonEl = document.getElementById('kb-json');
+        const jsonStatusEl = document.getElementById('json-status');
+        const previewBoxEl = document.getElementById('preview-box');
+        const testQueryEl = document.getElementById('test-query');
+
+        document.getElementById('logout-btn').onclick = () => {
+            clearAdminToken();
+            window.location.href = 'index.html';
+        };
+
+        function safeStringify(obj) {
+            return JSON.stringify(obj, null, 2);
+        }
+
+        async function loadKB() {
+            kbMetaEl.textContent = 'Dang tai thong tin KB...';
+            try {
+                const res = await fetchSupportKB();
+                const payload = res?.data || {};
+                kbJsonEl.value = safeStringify(payload);
+                const articleCount = Array.isArray(payload.articles) ? payload.articles.length : 0;
+                kbMetaEl.textContent = `Version: ${payload.version || '-'} | Articles: ${articleCount} | Updated: ${payload.updated_at || '-'}`;
+                jsonStatusEl.textContent = 'KB da duoc tai thanh cong.';
+                jsonStatusEl.className = 'text-xs text-emerald-600 mt-2';
+            } catch (e) {
+                jsonStatusEl.textContent = `Loi tai KB: ${e.message}`;
+                jsonStatusEl.className = 'text-xs text-red-600 mt-2';
+                kbMetaEl.textContent = 'Khong tai duoc KB.';
+            }
+        }
+
+        async function saveKB() {
+            let parsed;
+            try {
+                parsed = JSON.parse(kbJsonEl.value || '{}');
+            } catch (e) {
+                jsonStatusEl.textContent = `JSON khong hop le: ${e.message}`;
+                jsonStatusEl.className = 'text-xs text-red-600 mt-2';
+                return;
+            }
+
+            try {
+                const res = await updateSupportKB(parsed);
+                const payload = res?.data || parsed;
+                kbJsonEl.value = safeStringify(payload);
+                const articleCount = Array.isArray(payload.articles) ? payload.articles.length : 0;
+                kbMetaEl.textContent = `Version: ${payload.version || '-'} | Articles: ${articleCount} | Updated: ${payload.updated_at || '-'}`;
+                jsonStatusEl.textContent = 'Da luu KB va dong bo index.';
+                jsonStatusEl.className = 'text-xs text-emerald-600 mt-2';
+            } catch (e) {
+                jsonStatusEl.textContent = `Loi luu KB: ${e.message}`;
+                jsonStatusEl.className = 'text-xs text-red-600 mt-2';
+            }
+        }
+
+        async function reindexKB() {
+            try {
+                const res = await reindexSupportKB();
+                jsonStatusEl.textContent = `${res.message}. Collection: ${res.collection_name}. Articles indexed: ${res.article_count}.`;
+                jsonStatusEl.className = 'text-xs text-emerald-600 mt-2';
+            } catch (e) {
+                jsonStatusEl.textContent = `Loi reindex: ${e.message}`;
+                jsonStatusEl.className = 'text-xs text-red-600 mt-2';
+            }
+        }
+
+        async function testContext() {
+            const query = (testQueryEl.value || '').trim();
+            if (!query) {
+                previewBoxEl.textContent = 'Hay nhap cau hoi de preview context.';
+                return;
+            }
+
+            previewBoxEl.textContent = 'Dang truy van context...';
+            try {
+                const res = await previewSupportKBContext(query);
+                previewBoxEl.textContent = res?.context || 'Khong co context phu hop.';
+            } catch (e) {
+                previewBoxEl.textContent = `Loi preview: ${e.message}`;
+            }
+        }
+
+        document.getElementById('reload-btn').onclick = loadKB;
+        document.getElementById('save-btn').onclick = saveKB;
+        document.getElementById('reindex-btn').onclick = reindexKB;
+        document.getElementById('test-btn').onclick = testContext;
+
+        loadKB();
+    </script>
+</body>
+</html>

@@ -29,6 +29,7 @@
             <a href="admin.html" class="text-slate-500 hover:text-primary font-medium">Đơn hàng</a>
             <a href="admin-tickets.html" class="text-primary font-bold border-b-2 border-primary">Ticket CSKH</a>
             <a href="admin-products.html" class="text-slate-500 hover:text-primary font-medium">Sản phẩm</a>
+            <a href="admin-kb.html" class="text-slate-500 hover:text-primary font-medium">Support KB</a>
             <button id="logout-btn" class="text-red-500 hover:text-red-600 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-lg">logout</span> Thoát
             </button>
@@ -309,8 +310,21 @@
                 return '<p class="text-sm text-slate-500">Chưa có lịch sử xử lý.</p>';
             }
 
-            return activities
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            const sortedActivities = activities
+                .slice()
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            let hasShownAiAssessment = false;
+            const dedupedActivities = [];
+            for (const act of sortedActivities) {
+                if (act.action === 'ai_satisfaction_assessed') {
+                    if (hasShownAiAssessment) continue;
+                    hasShownAiAssessment = true;
+                }
+                dedupedActivities.push(act);
+            }
+
+            return dedupedActivities
                 .slice(0, 8)
                 .map((act) => {
                     const statusChange = act.old_status || act.new_status
