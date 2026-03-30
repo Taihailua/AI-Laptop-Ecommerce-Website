@@ -134,6 +134,7 @@
             let specsHtml = '';
             if (p.specs && typeof p.specs === 'object') {
                 const validSpecs = Object.entries(p.specs)
+                    .filter(([k]) => !String(k || '').startsWith('__'))
                     .filter(([k, v]) => String(k || '').trim() && String(v || '').trim());
 
                 specsHtml = validSpecs.map(([k, v]) => `

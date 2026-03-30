@@ -23,11 +23,33 @@ def get_user_by_username(db: Session, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
 
 # --- PRODUCT ---
-def get_products(db: Session, skip: int = 0, limit: int = 100, search: str = None):
+def _is_product_paused(product: models.Product) -> bool:
+    specs = product.specs if isinstance(product.specs, dict) else {}
+    paused_flag = specs.get("__business_paused__", False)
+    if isinstance(paused_flag, str):
+        return paused_flag.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(paused_flag)
+
+
+def get_products(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100,
+    search: str = None,
+    include_paused: bool = False,
+):
     query = db.query(models.Product)
     if search and search.strip():  # Chỉ filter nếu search không rỗng
         query = query.filter(models.Product.name.ilike(f"%{search}%") | models.Product.brand.ilike(f"%{search}%"))
-    return query.offset(skip).limit(limit).all()
+
+    products = query.all()
+    if not include_paused:
+        products = [p for p in products if not _is_product_paused(p)]
+
+    start = max(skip, 0)
+    if limit is None or limit < 0:
+        return products[start:]
+    return products[start:start + limit]
 
 def get_product(db: Session, product_id: int):
     return db.query(models.Product).filter(models.Product.id == product_id).first()
@@ -87,6 +109,11 @@ def create_order(db: Session, order_data: schemas.OrderCreate):
         )
         db.add(customer)
         db.flush() # Lấy ID để dùng cho Order
+    else:
+        if order_data.customer_name and customer.full_name != order_data.customer_name:
+            customer.full_name = order_data.customer_name
+        if order_data.customer_address and customer.address != order_data.customer_address:
+            customer.address = order_data.customer_address
     
     # Tạo order
     db_order = models.Order(customer_id=customer.id)

@@ -56,11 +56,12 @@
                             <th class="px-6 py-4 font-semibold text-sm">Hãng</th>
                             <th class="px-6 py-4 font-semibold text-sm">Giá (VND)</th>
                             <th class="px-6 py-4 font-semibold text-sm">Tồn kho</th>
+                            <th class="px-6 py-4 font-semibold text-sm">Trạng thái KD</th>
                             <th class="px-6 py-4 font-semibold text-sm text-right">Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="product-list" class="divide-y divide-slate-100 dark:divide-slate-800">
-                        <tr><td colspan="6" class="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td></tr>
+                        <tr><td colspan="7" class="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -134,12 +135,22 @@
     </div>
 
     <script type="module">
-        import { fetchProducts, createProduct, updateProduct, deleteProduct, getAdminToken, clearAdminToken } from './api.js';
+        import { fetchProducts, createProduct, updateProduct, deleteProduct, setProductBusinessPaused, getAdminToken, clearAdminToken } from './api.js';
 
         // Auth Check
         /* if (!getAdminToken()) window.location.href = 'admin-login.html'; */
 
         let currentProducts = [];
+
+        function isProductPaused(product) {
+            const specs = product?.specs;
+            if (!specs || typeof specs !== 'object') return false;
+            const raw = specs.__business_paused__;
+            if (typeof raw === 'string') {
+                return ['1', 'true', 'yes', 'on'].includes(raw.trim().toLowerCase());
+            }
+            return Boolean(raw);
+        }
 
         document.getElementById('logout-btn').onclick = function() {
             clearAdminToken();
@@ -150,11 +161,11 @@
         async function load() {
             const tbody = document.getElementById('product-list');
             try {
-                const products = await fetchProducts();
+                const products = await fetchProducts({ includePaused: true });
                 currentProducts = products;
                 
                 if(!products || !products.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-500">Chưa có sản phẩm nào.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-slate-500">Chưa có sản phẩm nào.</td></tr>';
                     return;
                 }
                 
@@ -179,7 +190,16 @@
                                 ${p.stock_quantity > 0 ? `${p.stock_quantity} Chiếc` : 'Hết hàng'}
                             </span>
                         </td>
+                        <td class="px-6 py-4">
+                            ${isProductPaused(p)
+                                ? '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Tạm ngừng</span>'
+                                : '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">Đang kinh doanh</span>'
+                            }
+                        </td>
                         <td class="px-6 py-4 text-right flex justify-end gap-2">
+                           <button onclick="toggleBusiness(${p.id})" class="p-2 text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all" title="${isProductPaused(p) ? 'Mở bán lại' : 'Tạm ngừng kinh doanh'}">
+                                <span class="material-symbols-outlined text-[20px]">${isProductPaused(p) ? 'play_circle' : 'pause_circle'}</span>
+                           </button>
                            <button onclick="openModal(${p.id})" class="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all" title="Sửa">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                            </button>
@@ -190,7 +210,29 @@
                     </tr>
                 `).join('');
             } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-red-500">Lỗi: ${e.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-red-500">Lỗi: ${e.message}</td></tr>`;
+            }
+        }
+
+        window.toggleBusiness = async function(id) {
+            const product = currentProducts.find(p => p.id === id);
+            if (!product) return;
+
+            const paused = isProductPaused(product);
+            const nextPaused = !paused;
+            const confirmText = nextPaused
+                ? 'Tạm ngừng kinh doanh sản phẩm này? Sản phẩm sẽ không hiển thị ở trang khách mua.'
+                : 'Mở bán lại sản phẩm này?';
+
+            if (!confirm(confirmText)) return;
+
+            try {
+                await setProductBusinessPaused(id, nextPaused);
+                await load();
+                alert(nextPaused ? 'Đã tạm ngừng kinh doanh sản phẩm.' : 'Đã mở bán lại sản phẩm.');
+            } catch (e) {
+                console.error(e);
+                alert('Lỗi: ' + e.message);
             }
         }
 
@@ -215,6 +257,7 @@
         function specsObjectToText(specs) {
             if (!specs || typeof specs !== 'object') return '';
             return Object.entries(specs)
+                .filter(([k]) => !String(k || '').startsWith('__'))
                 .filter(([k, v]) => String(k || '').trim() && String(v || '').trim())
                 .map(([k, v]) => `${k}: ${v}`)
                 .join('\n');

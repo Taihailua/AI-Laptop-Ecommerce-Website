@@ -267,6 +267,14 @@ def _is_service_related_message(message: str) -> bool:
     service_keywords = [
         "laptop",
         "may tinh",
+        "mua",
+        "muon mua",
+        "dat mua",
+        "chon",
+        "mau nay",
+        "model nay",
+        "san pham nay",
+        "lay mau nay",
         "san pham",
         "cau hinh",
         "cpu",
@@ -294,6 +302,13 @@ def _is_service_related_message(message: str) -> bool:
         "doi tra",
         "hoan tien",
         "ho tro",
+        "van de",
+        "su co",
+        "loi",
+        "hong",
+        "khong len",
+        "khong hoat dong",
+        "khong dung duoc",
         "ticket",
         "cskh",
         "techshop",
@@ -511,9 +526,6 @@ def chat_assistant(request: AssistantChatRequest):
                 recommended_products=[],
             )
 
-        if not _is_service_related_message(request.message):
-            return AssistantChatResponse(response=ASSISTANT_OUT_OF_SCOPE_TEXT, recommended_products=[])
-
         ai_response = get_chat_response(request.message)
         recommended_products = _build_recommendations_from_response(ai_response)
 
@@ -541,7 +553,10 @@ def chat_with_ai(request: ChatRequest, db: Session = Depends(get_db)):
                 recommended_products=[],
             )
 
-        if not _is_service_related_message(request.message):
+        ticket = crud.get_ticket_by_session_id(db, request.session_id)
+
+        # Allow concise follow-up messages once a ticket session already exists.
+        if ticket is None and not _is_service_related_message(request.message):
             return ChatResponse(
                 response=TICKET_OUT_OF_SCOPE_TEXT,
                 ticket_id=0,
@@ -550,7 +565,6 @@ def chat_with_ai(request: ChatRequest, db: Session = Depends(get_db)):
                 recommended_products=[],
             )
 
-        ticket = crud.get_ticket_by_session_id(db, request.session_id)
         if not ticket:
             category_code, subject = classify_ticket_with_llm(request.message)
             category = _category_from_code(category_code)
