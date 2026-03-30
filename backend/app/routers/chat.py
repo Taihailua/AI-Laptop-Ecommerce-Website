@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
 from typing import Optional
 import logging
 import re
 import unicodedata
+import os
+from uuid import uuid4
 from sqlalchemy.orm import Session
 from ..ai.agent import (
     get_chat_response,
@@ -71,6 +73,101 @@ class ChatResponse(BaseModel):
 class AssistantChatResponse(BaseModel):
     response: str
     recommended_products: list[RecommendedProduct] = Field(default_factory=list)
+
+class TicketAttachmentResponse(BaseModel):
+    url: str
+    mime_type: str
+    size: int
+    original_name: str
+
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
+MAX_VIDEO_BYTES = 20 * 1024 * 1024
+
+ALLOWED_ATTACHMENT_MIME = {
+    "image/jpeg": ("jpg", MAX_IMAGE_BYTES),
+    "image/png": ("png", MAX_IMAGE_BYTES),
+    "image/webp": ("webp", MAX_IMAGE_BYTES),
+    "video/mp4": ("mp4", MAX_VIDEO_BYTES),
+}
+
+ALLOWED_ATTACHMENT_EXT = {".jpg", ".jpeg", ".png", ".webp", ".mp4"}
+
+UPLOAD_TICKETS_DIR = os.path.join("uploads", "tickets")
+
+PUBLIC_BASE_URL = "http://localhost:8000"
+
+def _infer_extension_from_filename(filename: str | None) -> str:
+    if not filename:
+        return ""
+    ext = os.path.splitext(filename)[1].lower()
+    return ext
+
+@router.post("/attachments", response_model=TicketAttachmentResponse)
+async def upload_ticket_attachment(file: UploadFile = File(...)):
+    try:
+        if not file:
+            raise HTTPException(status_code=400, detail="Chưa có file được upload.")
+
+        content_type = (file.content_type or "").lower()
+        ext = _infer_extension_from_filename(file.filename)
+
+        if ext and ext not in ALLOWED_ATTACHMENT_EXT:
+            raise HTTPException(
+                status_code=400,
+                detail="Định dạng file không hợp lệ. Chỉ hỗ trợ jpg/png/webp và mp4.",
+            )
+
+        if content_type not in ALLOWED_ATTACHMENT_MIME:
+            # Nếu browser gửi content_type không chuẩn, fallback theo extension
+            if ext in {".jpg", ".jpeg", ".png", ".webp"}:
+                content_type = "image/jpeg" if ext in {".jpg", ".jpeg"} else (
+                    "image/png" if ext == ".png" else "image/webp"
+                )
+            elif ext == ".mp4":
+                content_type = "video/mp4"
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Định dạng file không hợp lệ. Chỉ hỗ trợ jpg/png/webp và mp4.",
+                )
+
+        _, max_size = ALLOWED_ATTACHMENT_MIME[content_type]
+        # UploadFile.size có thể không có sẵn; dùng read() để xác định size chắc chắn.
+        data = await file.read()
+        size = len(data or b"")
+
+        if size <= 0:
+            raise HTTPException(status_code=400, detail="File upload rỗng hoặc không hợp lệ.")
+
+        if size > max_size:
+            if content_type.startswith("image/"):
+                raise HTTPException(status_code=413, detail="Ảnh vượt quá dung lượng tối đa 5MB.")
+            raise HTTPException(status_code=413, detail="Video vượt quá dung lượng tối đa 20MB.")
+
+        os.makedirs(UPLOAD_TICKETS_DIR, exist_ok=True)
+
+        # Giữ phần đuôi theo mime (tránh lệch ext nếu browser đặt sai)
+        expected_ext = ALLOWED_ATTACHMENT_MIME[content_type][0]
+        saved_filename = f"{uuid4().hex}.{expected_ext}"
+        saved_path = os.path.join(UPLOAD_TICKETS_DIR, saved_filename)
+
+        try:
+            with open(saved_path, "wb") as f:
+                f.write(data)
+        except OSError as e:
+            raise HTTPException(status_code=500, detail=f"Lỗi ghi file upload: {str(e)}")
+
+        url = f"{PUBLIC_BASE_URL}/static/tickets/{saved_filename}"
+        return TicketAttachmentResponse(
+            url=url,
+            mime_type=content_type,
+            size=size,
+            original_name=file.filename or "",
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi upload file: {str(e)}")
 
 
 def _history_from_ticket(ticket: models.Ticket) -> list[tuple[str, str]]:
