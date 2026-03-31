@@ -39,6 +39,7 @@
     import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
     import {
       fetchProducts,
+      fetchFilters,
       Cart,
       sendAssistantMessage,
       sendChatMessage,
@@ -149,6 +150,11 @@
       const [productsError, setProductsError] = useState("");
       const [search, setSearch] = useState("");
       const [cartCount, setCartCount] = useState(0);
+      const [availableFilters, setAvailableFilters] = useState({ cpu: [], ram: [], storage: [], screen: [] });
+      const [selectedFilters, setSelectedFilters] = useState({ cpu: [], ram: [], storage: [], screen: [] });
+      const [sortPrice, setSortPrice] = useState("");
+      const [isFiltersLoading, setIsFiltersLoading] = useState(true);
+      const [openFilterPopup, setOpenFilterPopup] = useState(null);
       const [chatInput, setChatInput] = useState("");
       const [isChatMinimized, setIsChatMinimized] = useState(false);
       const [isTicketBoxMinimized, setIsTicketBoxMinimized] = useState(true);
@@ -204,11 +210,28 @@
         setCartCount(total);
       }
 
-      async function loadProducts(searchText = "") {
+      async function loadFilters() {
+        setIsFiltersLoading(true);
+        try {
+          const data = await fetchFilters();
+          setAvailableFilters(data);
+        } catch (err) {
+          console.error("Lỗi tải bộ lọc:", err);
+        } finally {
+          setIsFiltersLoading(false);
+        }
+      }
+
+      async function loadProducts(searchText = search, filters = selectedFilters, sort = sortPrice) {
         setLoadingProducts(true);
         setProductsError("");
         try {
-          const data = await fetchProducts(searchText);
+          const options = {
+            search: searchText,
+            specsFilter: JSON.stringify(filters),
+            sortPrice: sort
+          };
+          const data = await fetchProducts(options);
           setProducts(Array.isArray(data) ? data : []);
         } catch (err) {
           setProductsError(`Lỗi tải sản phẩm: ${err.message}. Hãy đảm bảo backend đang chạy tại localhost:8000`);
@@ -219,17 +242,28 @@
       }
 
       useEffect(() => {
-        loadProducts("");
+        loadFilters();
+        loadProducts();
         refreshCartCount();
+      }, []);
+
+      useEffect(() => {
+        const handleClick = (e) => {
+          if (!e.target.closest('.filter-popup-container')) {
+            setOpenFilterPopup(null);
+          }
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
       }, []);
 
       useEffect(() => {
         window.clearTimeout(searchTimerRef.current);
         searchTimerRef.current = window.setTimeout(() => {
-          loadProducts(search.trim());
+          loadProducts(search.trim(), selectedFilters, sortPrice);
         }, 400);
         return () => window.clearTimeout(searchTimerRef.current);
-      }, [search]);
+      }, [search, selectedFilters, sortPrice]);
 
       useEffect(() => {
         if (!chatMessagesRef.current) return;
@@ -814,7 +848,7 @@
                 ),
                 React.createElement(
                   "div",
-                  { className: "flex items-center justify-between px-4 pb-6" },
+                  { className: "flex items-center justify-between px-4 pb-2" },
                   React.createElement("h2", { className: "text-slate-900 dark:text-white text-2xl font-bold leading-tight" }, "Featured Laptops"),
                   React.createElement(
                     "div",
@@ -825,6 +859,134 @@
                       value: search,
                       onChange: (e) => setSearch(e.target.value)
                     })
+                  )
+                ),
+                  React.createElement(
+                  "div",
+                  { className: "flex flex-col xl:flex-row justify-between items-start xl:items-center px-4 pb-6 gap-4 relative z-20" },
+                  React.createElement(
+                    "div",
+                    { className: "flex flex-wrap gap-x-4 gap-y-3 items-center flex-1" },
+                    isFiltersLoading && React.createElement("span", { className: "text-sm text-slate-500" }, "Đang tải bộ lọc..."),
+                    !isFiltersLoading && Object.entries(availableFilters).map(([cat, values]) => {
+                      if (!values || !values.length) return null;
+                      const catLabel = { cpu: "CPU", ram: "RAM", storage: "Storage", screen: "Screen" }[cat] || cat;
+                      const isPopupOpen = openFilterPopup === cat;
+                      const selectedCount = selectedFilters[cat].length;
+                      
+                      let buttonText = catLabel;
+                      if (selectedCount === 1) {
+                        buttonText = selectedFilters[cat][0];
+                      } else if (selectedCount > 1) {
+                        buttonText = `${selectedFilters[cat][0]} + ${selectedCount - 1}`;
+                      }
+
+                      return React.createElement(
+                        "div",
+                        { key: cat, className: "relative filter-popup-container" },
+                        React.createElement(
+                          "div",
+                          { className: "flex items-center" },
+                          React.createElement(
+                            "button",
+                            {
+                              onClick: () => setOpenFilterPopup(isPopupOpen ? null : cat),
+                              className: `group flex items-center justify-between gap-2 px-4 py-2 text-sm font-semibold rounded-lg border transition-all duration-200 ${
+                                selectedCount > 0
+                                  ? "bg-primary text-white border-primary shadow-md hover:bg-primary/90"
+                                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-primary/50"
+                              }`
+                            },
+                            React.createElement("span", { className: "truncate max-w-[120px]" }, buttonText),
+                            React.createElement("span", {
+                              className: `material-symbols-outlined text-[16px] transition-transform duration-200 ${
+                                isPopupOpen ? "rotate-180" : ""
+                              }`
+                            }, "expand_more")
+                          ),
+                          selectedCount > 0 && React.createElement(
+                            "button",
+                            {
+                              onClick: () => setSelectedFilters(prev => ({ ...prev, [cat]: [] })),
+                              className: "ml-2 flex items-center justify-center w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
+                            },
+                            React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "close")
+                          )
+                        ),
+                        isPopupOpen && React.createElement(
+                          "div",
+                          {
+                            className: "absolute top-full left-0 mt-2 min-w-[200px] w-max bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                          },
+                          React.createElement(
+                            "div",
+                            { className: "flex items-center justify-between p-3 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50" },
+                            React.createElement("h4", { className: "text-sm font-bold text-slate-800 dark:text-slate-200" }, `Chọn ${catLabel}`),
+                            React.createElement(
+                              "button",
+                              {
+                                onClick: () => setSelectedFilters(prev => ({ ...prev, [cat]: [] })),
+                                className: "text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                              },
+                              "Clear all"
+                            )
+                          ),
+                          React.createElement(
+                            "div",
+                            { className: "max-h-64 overflow-y-auto p-2 flex flex-col gap-1" },
+                            values.map(val => {
+                              const isSelected = selectedFilters[cat].includes(val);
+                              return React.createElement(
+                                "button",
+                                {
+                                  key: val,
+                                  onClick: () => {
+                                    setSelectedFilters(prev => {
+                                      const newCatVals = prev[cat].includes(val)
+                                        ? prev[cat].filter(v => v !== val)
+                                        : [...prev[cat], val];
+                                      return { ...prev, [cat]: newCatVals };
+                                    });
+                                  },
+                                  className: `flex items-center gap-3 w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
+                                    isSelected
+                                      ? "bg-primary/10 text-primary font-semibold"
+                                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                                  }`
+                                },
+                                React.createElement(
+                                  "div",
+                                  {
+                                    className: `flex items-center justify-center w-4 h-4 rounded border ${
+                                      isSelected
+                                        ? "bg-primary border-primary text-white"
+                                        : "border-slate-300 dark:border-slate-600"
+                                    }`
+                                  },
+                                  isSelected && React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "check")
+                                ),
+                                React.createElement("span", { className: "flex-1 break-words" }, val)
+                              );
+                            })
+                          )
+                        )
+                      );
+                    })
+                  ),
+                  React.createElement(
+                    "button",
+                    {
+                      onClick: () => {
+                        setSortPrice(prev => {
+                          if (!prev) return "asc";
+                          if (prev === "asc") return "desc";
+                          return "";
+                        });
+                      },
+                      className: "flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm hover:border-primary/50 transition-colors whitespace-nowrap"
+                    },
+                    React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "sort"),
+                    sortPrice === "" ? "Mặc định (Sắp xếp theo giá)" : sortPrice === "asc" ? "Giá tăng dần ⬆" : "Giá giảm dần ⬇"
                   )
                 ),
                 React.createElement(

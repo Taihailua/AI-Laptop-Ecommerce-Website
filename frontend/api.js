@@ -61,11 +61,19 @@ export async function fetchProducts(searchOrOptions = '', maybeOptions = {}) {
   const params = new URLSearchParams();
   if (search.trim()) params.set('search', search.trim());
   if (includePaused) params.set('include_paused', 'true');
+  if (options?.specsFilter) params.set('specs_filter', options.specsFilter);
+  if (options?.sortPrice) params.set('sort_by_price', options.sortPrice);
 
   const qs = params.toString();
   const url = qs ? `${API_BASE}/api/products/?${qs}` : `${API_BASE}/api/products/`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products');
+  return res.json();
+}
+
+export async function fetchFilters() {
+  const res = await fetch(`${API_BASE}/api/products/filters`);
+  if (!res.ok) throw new Error('Failed to fetch product filters');
   return res.json();
 }
 
