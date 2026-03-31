@@ -51,6 +51,7 @@
 
     const ORDER_INTENT_REGEX = /(ch[oố]t\s*đ[ơo]n|chot\s*don|đặt\s*hàng|dat\s*hang|mua\s*ngay|mua\s*luon|thanh\s*toán|checkout)/i;
     const SELECT_PRODUCT_INTENT_REGEX = /(ch[oọ]n|l[aấ]y|đặt|mua|thêm\s*(?:v[aà]|lu[oô]n)?|chốt)(?:\s+th[uứ]\s+)?(?:m[aá]y|laptop|s[aả]n\s*ph[aẩ]m)?/i;
+    const CURRENT_PRODUCT_REFERENCE_REGEX = /(m[aẫ]u\s+n[aà]y|m[aá]y\s+n[aà]y|model\s+n[aà]y|con\s+n[aà]y|chi[eế]c\s+n[aà]y|s[aả]n\s*ph[aẩ]m\s+n[aà]y)/i;
     const PRODUCT_ID_REGEX = /(?:\bID\s*[:#-]?\s*|\bm[aã]\s*(?:s[aả]n\s*ph[aẩ]m)?\s*[:#-]?\s*|#)(\d+)\b/gi;
     const CHECKOUT_INFO_REQUEST_REGEX = /(họ\s*và\s*tên|số\s*điện\s*thoại|địa\s*chỉ\s*(nhận\s*hàng|giao\s*hàng)|số\s*cccd|cung\s*cấp\s*(cho\s*mình\s*)?thông\s*tin|tạo\s*đơn\s*hàng|chốt\s*đơn)/i;
     const TICKET_STATUS_LABELS = {
@@ -106,7 +107,10 @@
     function formatSpecs(specs) {
       if (!specs) return "";
       if (typeof specs === "object") {
-        return Object.entries(specs).map(([k, v]) => `${k}: ${v}`).join(" | ");
+        return Object.entries(specs)
+          .filter(([k]) => !String(k || "").startsWith("__"))
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(" | ");
       }
       return String(specs);
     }
@@ -138,6 +142,7 @@
       const searchTimerRef = useRef(null);
       const chatMessagesRef = useRef(null);
       const rememberedRecommendedProductsRef = useRef(new Map());
+      const recentRecommendedProductIdsRef = useRef([]);
 
       const [products, setProducts] = useState([]);
       const [loadingProducts, setLoadingProducts] = useState(true);
@@ -309,6 +314,14 @@
           return [latestRecommended[0]];
         }
 
+        if (CURRENT_PRODUCT_REFERENCE_REGEX.test(message)) {
+          const recentIds = recentRecommendedProductIdsRef.current || [];
+          if (recentIds.length === 1) {
+            const recentProduct = rememberedRecommendedProductsRef.current.get(recentIds[0]);
+            if (recentProduct) return [recentProduct];
+          }
+        }
+
         return [];
       }
 
@@ -422,6 +435,12 @@
             if (p && typeof p.id === "number") {
               rememberedRecommendedProductsRef.current.set(p.id, p);
             }
+          }
+
+          if (recommended.length) {
+            recentRecommendedProductIdsRef.current = recommended
+              .map((p) => Number(p?.id))
+              .filter((id) => Number.isInteger(id));
           }
 
           const autoAddResult = autoAddSelectedProductsFromChat(msg, recommended);

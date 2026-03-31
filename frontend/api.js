@@ -5,6 +5,21 @@
 
 const API_BASE = 'http://localhost:8000';
 
+async function readErrorMessage(res, fallback = 'Request failed') {
+  try {
+    const data = await res.json();
+    if (data?.detail) return data.detail;
+    if (data?.message) return data.message;
+  } catch (_) {}
+
+  try {
+    const text = await res.text();
+    if (text) return text;
+  } catch (_) {}
+
+  return fallback;
+}
+
 // ─── Cart (localStorage) ─────────────────────────────────────────────────────
 export const Cart = {
   getAll() {
@@ -37,10 +52,18 @@ export const Cart = {
 };
 
 // ─── Products ─────────────────────────────────────────────────────────────────
-export async function fetchProducts(search = '') {
-  const url = search
-    ? `${API_BASE}/api/products/?search=${encodeURIComponent(search)}`
-    : `${API_BASE}/api/products/`;
+export async function fetchProducts(searchOrOptions = '', maybeOptions = {}) {
+  const isObjectArg = typeof searchOrOptions === 'object' && searchOrOptions !== null;
+  const search = isObjectArg ? String(searchOrOptions.search || '') : String(searchOrOptions || '');
+  const options = isObjectArg ? searchOrOptions : maybeOptions;
+  const includePaused = Boolean(options?.includePaused);
+
+  const params = new URLSearchParams();
+  if (search.trim()) params.set('search', search.trim());
+  if (includePaused) params.set('include_paused', 'true');
+
+  const qs = params.toString();
+  const url = qs ? `${API_BASE}/api/products/?${qs}` : `${API_BASE}/api/products/`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products');
   return res.json();
@@ -67,7 +90,15 @@ export async function updateProduct(id, formData) {
 
 export async function deleteProduct(id) {
   const res = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Xóa sản phẩm thất bại.'));
+}
+
+export async function setProductBusinessPaused(id, isPaused) {
+  const res = await fetch(`${API_BASE}/api/products/${id}/business-status?is_paused=${isPaused ? 'true' : 'false'}`, {
+    method: 'PATCH'
+  });
+  if (!res.ok) throw new Error(await readErrorMessage(res, 'Không cập nhật được trạng thái kinh doanh.'));
+  return res.json();
 }
 
 
