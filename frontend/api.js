@@ -249,6 +249,51 @@ export async function login(username, password) {
   return res.json();
 }
 
+function buildAdminHeaders(json = false) {
+  const token = getAdminToken();
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (json) headers['Content-Type'] = 'application/json';
+  return headers;
+}
+
+async function adminRequest(path, options = {}) {
+  const { method = 'GET', body = null } = options;
+  const res = await fetch(`${API_BASE}${path}`, {
+    method,
+    headers: buildAdminHeaders(Boolean(body)),
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, 'Admin request failed'));
+  }
+
+  return res.json();
+}
+
+export async function fetchSupportKB() {
+  return adminRequest('/api/admin/support-kb');
+}
+
+export async function updateSupportKB(data) {
+  return adminRequest('/api/admin/support-kb', {
+    method: 'PUT',
+    body: data
+  });
+}
+
+export async function reindexSupportKB() {
+  return adminRequest('/api/admin/support-kb/reindex', {
+    method: 'POST'
+  });
+}
+
+export async function previewSupportKBContext(query) {
+  const params = new URLSearchParams({ query: String(query || '') });
+  return adminRequest(`/api/admin/support-kb/preview-context?${params.toString()}`);
+}
+
 // ─── Admin Auth ───────────────────────────────────────────────────────────────
 export function getAdminToken() {
   return localStorage.getItem('admin_token');

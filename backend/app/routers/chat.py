@@ -188,14 +188,16 @@ def _auto_assess_ticket_satisfaction(db: Session, ticket: models.Ticket) -> None
     if ticket.satisfaction_score is not None:
         return
 
+    # Keep only one AI auto-assessment entry per ticket to avoid noisy duplicate logs.
+    if _latest_ai_satisfaction_note(ticket) is not None:
+        return
+
     history = _history_from_ticket(ticket)
     if len(history) < 4:
         return
 
     score, reason = estimate_customer_satisfaction_from_history(history)
     note = f"Mức độ hài lòng ước lượng: {score}/5. Lý do: {reason}"
-    if _latest_ai_satisfaction_note(ticket) == note:
-        return
 
     crud.add_ticket_activity(
         db,

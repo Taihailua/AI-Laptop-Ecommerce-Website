@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from .. import crud
 from . import rag
+from .support_kb import build_support_kb_context
 
 logger = logging.getLogger(__name__)
 
@@ -404,6 +405,8 @@ def get_ticket_support_response(message: str, chat_history: list = None) -> str:
             "Đối với tư vấn chọn mua laptop, bạn vui lòng sử dụng khung chat tư vấn sản phẩm để được hỗ trợ đúng nhu cầu."
         )
 
+    kb_context = build_support_kb_context(message, top_k=3)
+
     history_text = ""
     if chat_history:
         lines = []
@@ -414,9 +417,12 @@ def get_ticket_support_response(message: str, chat_history: list = None) -> str:
 
     prompt = (
         f"{TICKET_SUPPORT_PROMPT}\n\n"
+        f"Tri thuc CSKH uu tien:\n{kb_context}\n\n"
         f"Lịch sử gần đây:\n{history_text or '(trống)'}\n\n"
         f"Khách hiện tại: {message}\n\n"
-        "Hãy phản hồi theo phạm vi CSKH, tuyệt đối không tư vấn mua sản phẩm."
+        "Hay phan hoi theo pham vi CSKH, tuyet doi khong tu van mua san pham. "
+        "Uu tien thong tin trong Tri thuc CSKH uu tien. "
+        "Neu KB chua du du lieu de ket luan, hay noi ro thong tin can bo sung hoac chuyen nhan vien CSKH."
     )
 
     try:

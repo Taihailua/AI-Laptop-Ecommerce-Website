@@ -170,3 +170,43 @@ class TicketAdminUpdate(BaseModel):
     status: Optional[str] = None
     note: Optional[str] = None
     actor: str = "admin"
+
+
+# ----------------- Support KB -----------------
+class SupportKBArticle(BaseModel):
+    id: str
+    title: str
+    category: str
+    intents: List[str] = []
+    keywords: List[str] = []
+    guidance: List[str] = []
+    required_fields: List[str] = []
+    sla_target_hours: Optional[int] = None
+    escalation_rule: str = ""
+    handoff_when: List[str] = []
+    customer_message_template: Optional[str] = None
+
+
+class SupportKBPayload(BaseModel):
+    version: str
+    source: Optional[str] = None
+    policy_notes: Optional[str] = None
+    updated_at: Optional[str] = None
+    policies: dict[str, Any] = {}
+    articles: List[SupportKBArticle] = []
+
+
+class SupportKBResponse(BaseModel):
+    message: str = "ok"
+    data: SupportKBPayload
+
+
+class SupportKBReindexResponse(BaseModel):
+    message: str
+    article_count: int
+    collection_name: str
+
+
+class SupportKBContextPreviewResponse(BaseModel):
+    query: str
+    context: str

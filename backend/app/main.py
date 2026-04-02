@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from .routers import products, orders, chat, auth
+from .routers import products, orders, chat, auth, support_kb_admin
 
 @app.get("/")
 def read_root():
@@ -36,5 +36,6 @@ app.include_router(products.router)
 app.include_router(orders.router)
 app.include_router(chat.router)
 app.include_router(auth.router)
+app.include_router(support_kb_admin.router)
 
 
