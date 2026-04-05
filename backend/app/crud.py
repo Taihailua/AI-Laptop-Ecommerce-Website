@@ -2,8 +2,10 @@ from sqlalchemy.orm import Session, joinedload
 from . import models, schemas
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from passlib.context import CryptContext
+import json
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_password_hash(password):
     return pwd_context.hash(password)
 
@@ -37,6 +39,8 @@ def get_products(
     limit: int = 100,
     search: str = None,
     include_paused: bool = False,
+    specs_filter: str = None,
+    sort_by_price: str = None,
 ):
     query = db.query(models.Product)
     if search and search.strip():  # Chỉ filter nếu search không rỗng
@@ -45,6 +49,35 @@ def get_products(
     products = query.all()
     if not include_paused:
         products = [p for p in products if not _is_product_paused(p)]
+
+    if specs_filter:
+        try:
+            filters = json.loads(specs_filter)
+            filtered_products = []
+            for p in products:
+                p_specs = dict(p.specs) if isinstance(p.specs, dict) else {}
+                match = True
+                for cat, values in filters.items():
+                    if not values:
+                        continue
+                    cat_spec_val = p_specs.get(cat)
+                    if not cat_spec_val:
+                        match = False
+                        break
+                    # OR within the category
+                    if not any(str(cat_spec_val).lower().strip() == str(v).lower().strip() for v in values):
+                        match = False
+                        break
+                if match:
+                    filtered_products.append(p)
+            products = filtered_products
+        except Exception:
+            pass
+
+    if sort_by_price == "asc":
+        products.sort(key=lambda x: x.price)
+    elif sort_by_price == "desc":
+        products.sort(key=lambda x: x.price, reverse=True)
 
     start = max(skip, 0)
     if limit is None or limit < 0:

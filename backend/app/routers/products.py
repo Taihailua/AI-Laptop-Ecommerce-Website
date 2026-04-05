@@ -131,15 +131,43 @@ def update_product(
     db.refresh(product)
     return product
 
+@router.get("/filters")
+def get_product_filters(db: Session = Depends(get_db)):
+    products = crud.get_products(db, skip=0, limit=10000, include_paused=False)
+    filters = {
+        "cpu": set(),
+        "ram": set(),
+        "storage": set(),
+        "screen": set()
+    }
+    for p in products:
+        specs = _normalize_specs(p.specs)
+        for key in filters.keys():
+            val = specs.get(key)
+            if val and str(val).strip():
+                filters[key].add(str(val).strip())
+    
+    return {k: sorted(list(v)) for k, v in filters.items()}
+
 @router.get("/", response_model=list[schemas.ProductResponse])
 def read_products(
     skip: int = 0,
     limit: int = 100,
     search: str = None,
     include_paused: bool = False,
+    specs_filter: str = None,
+    sort_by_price: str = None,
     db: Session = Depends(get_db),
 ):
-    return crud.get_products(db, skip=skip, limit=limit, search=search, include_paused=include_paused)
+    return crud.get_products(
+        db, 
+        skip=skip, 
+        limit=limit, 
+        search=search, 
+        include_paused=include_paused,
+        specs_filter=specs_filter,
+        sort_by_price=sort_by_price
+    )
 
 @router.get("/{product_id}", response_model=schemas.ProductResponse)
 def read_product(product_id: int, include_paused: bool = False, db: Session = Depends(get_db)):
